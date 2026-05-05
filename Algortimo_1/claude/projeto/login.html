@@ -1,0 +1,318 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background-color: #f0f4f8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 400px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+    }
+
+    .login-header { text-align: center; margin-bottom: 32px; }
+
+    .login-icon {
+      width: 52px; height: 52px;
+      background-color: #1a56db;
+      border-radius: 10px;
+      margin: 0 auto 16px;
+      display: flex; align-items: center; justify-content: center;
+    }
+
+    .login-icon svg { width: 26px; height: 26px; fill: white; }
+
+    .login-header h1 { font-size: 22px; font-weight: 600; color: #1a202c; margin-bottom: 6px; }
+    .login-header p  { font-size: 14px; color: #718096; }
+
+    .abas {
+      display: flex;
+      border-bottom: 1px solid #e2e8f0;
+      margin-bottom: 24px;
+    }
+
+    .aba {
+      flex: 1; text-align: center;
+      padding: 10px 0;
+      font-size: 14px; font-weight: 500;
+      color: #718096;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
+
+    .aba.ativa { color: #1a56db; border-bottom-color: #1a56db; }
+
+    .tela { display: none; }
+    .tela.ativa { display: block; }
+
+    .form-group { margin-bottom: 16px; }
+
+    .form-group label {
+      display: block; font-size: 13px;
+      font-weight: 500; color: #4a5568; margin-bottom: 7px;
+    }
+
+    .form-group input {
+      width: 100%; padding: 11px 14px;
+      border: 1px solid #cbd5e0; border-radius: 8px;
+      font-size: 14px; color: #2d3748;
+      background: #fff; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    .form-group input:focus {
+      border-color: #1a56db;
+      box-shadow: 0 0 0 3px rgba(26,86,219,0.12);
+    }
+
+    .form-group input::placeholder { color: #a0aec0; }
+
+    .btn {
+      width: 100%; padding: 12px;
+      background: #1a56db; color: white;
+      border: none; border-radius: 8px;
+      font-size: 15px; font-weight: 600;
+      cursor: pointer; margin-top: 8px;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .btn:hover { background: #1648c0; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: #a0aec0; cursor: not-allowed; }
+
+    .alerta {
+      display: none; border-radius: 8px;
+      padding: 10px 14px; font-size: 13px; margin-bottom: 16px;
+    }
+
+    .alerta.erro    { background:#fff5f5; border:1px solid #fed7d7; color:#c53030; }
+    .alerta.sucesso { background:#f0fff4; border:1px solid #c6f6d5; color:#276749; }
+  </style>
+</head>
+<body>
+
+<div class="login-container">
+  <div class="login-header">
+    <div class="login-icon">
+      <svg viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+    </div>
+    <h1 id="titulo-pagina">Bem-vindo de volta</h1>
+    <p id="subtitulo-pagina">Entre na sua conta para continuar</p>
+  </div>
+
+  <div class="abas">
+    <div class="aba ativa" onclick="trocarAba('login')">Entrar</div>
+    <div class="aba"       onclick="trocarAba('cadastro')">Cadastrar</div>
+  </div>
+
+  <!-- TELA DE LOGIN -->
+  <div id="tela-login" class="tela ativa">
+    <div class="alerta erro"    id="erro-login"></div>
+    <div class="alerta sucesso" id="sucesso-login"></div>
+
+    <div class="form-group">
+      <label for="email-login">E-mail</label>
+      <input type="email" id="email-login" placeholder="seu@email.com" />
+    </div>
+
+    <div class="form-group">
+      <label for="senha-login">Senha</label>
+      <input type="password" id="senha-login" placeholder="••••••••" />
+    </div>
+
+    <button class="btn" onclick="fazerLogin()">Entrar</button>
+  </div>
+
+  <!-- TELA DE CADASTRO -->
+  <div id="tela-cadastro" class="tela">
+    <div class="alerta erro"    id="erro-cadastro"></div>
+    <div class="alerta sucesso" id="sucesso-cadastro"></div>
+
+    <div class="form-group">
+      <label for="nome-cadastro">Nome completo</label>
+      <input type="text" id="nome-cadastro" placeholder="Seu Nome" />
+    </div>
+
+    <div class="form-group">
+      <label for="email-cadastro">E-mail</label>
+      <input type="email" id="email-cadastro" placeholder="seu@email.com" />
+    </div>
+
+    <div class="form-group">
+      <label for="senha-cadastro">Senha</label>
+      <input type="password" id="senha-cadastro" placeholder="Mínimo 6 caracteres" />
+    </div>
+
+    <button class="btn" onclick="fazerCadastro()">Criar conta</button>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp }                              from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+  // =====================================================
+  // CONFIGURE AQUI COM OS DADOS DO SEU PROJETO FIREBASE
+  // Como obter:
+  //   1. https://console.firebase.google.com
+  //   2. Selecione seu projeto
+  //   3. Clique na engrenagem > "Configurações do projeto"
+  //   4. Role até "Seus aplicativos" > clique em "</>  Web"
+  //   5. Registre o app e copie o firebaseConfig abaixo
+  // =====================================================
+  const firebaseConfig = {
+    apiKey:            "cole-aqui-a-apiKey",
+    authDomain:        "cole-aqui-o-authDomain",
+    projectId:         "cole-aqui-o-projectId",
+    storageBucket:     "cole-aqui-o-storageBucket",
+    messagingSenderId: "cole-aqui-o-messagingSenderId",
+    appId:             "cole-aqui-o-appId",
+  };
+
+  // URL do seu servidor Node.js
+  const SERVIDOR = 'http://localhost:3000';
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // Deixa as funções acessíveis aos botões
+  window.fazerLogin = async function () {
+    const email = document.getElementById('email-login').value.trim();
+    const senha = document.getElementById('senha-login').value;
+    mostrarAlerta('login', '', '');
+
+    if (!email || !senha) {
+      return mostrarAlerta('login', 'erro', 'Preencha e-mail e senha.');
+    }
+
+    setBtn('tela-login', true);
+
+    try {
+      // 1. Firebase valida as credenciais e retorna um token
+      const credencial = await signInWithEmailAndPassword(auth, email, senha);
+      const token = await credencial.user.getIdToken();
+
+      // 2. Envia o token ao seu servidor Node.js para verificação
+      const resposta = await fetch(`${SERVIDOR}/verificar-token`, {
+        method: 'POST',
+        headers: { 'Authorization': `Bearer ${token}` },
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        // 3. Salva o token no navegador para uso futuro
+        localStorage.setItem('token', token);
+        mostrarAlerta('login', 'sucesso', `Bem-vindo, ${dados.usuario.nome || dados.usuario.email}! Redirecionando...`);
+        setTimeout(() => { window.location.href = 'painel.html'; }, 1500);
+      } else {
+        mostrarAlerta('login', 'erro', dados.erro || 'Erro ao verificar login.');
+      }
+    } catch (err) {
+      mostrarAlerta('login', 'erro', traduzirErroFirebase(err.code));
+    } finally {
+      setBtn('tela-login', false);
+    }
+  };
+
+  window.fazerCadastro = async function () {
+    const nome  = document.getElementById('nome-cadastro').value.trim();
+    const email = document.getElementById('email-cadastro').value.trim();
+    const senha = document.getElementById('senha-cadastro').value;
+    mostrarAlerta('cadastro', '', '');
+
+    if (!nome || !email || !senha) {
+      return mostrarAlerta('cadastro', 'erro', 'Preencha todos os campos.');
+    }
+
+    setBtn('tela-cadastro', true);
+
+    try {
+      // Chama o servidor Node.js para criar o usuário
+      const resposta = await fetch(`${SERVIDOR}/cadastro`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome, email, senha }),
+      });
+
+      const dados = await resposta.json();
+
+      if (resposta.ok) {
+        mostrarAlerta('cadastro', 'sucesso', 'Conta criada! Agora faça o login.');
+        setTimeout(() => trocarAba('login'), 2000);
+      } else {
+        mostrarAlerta('cadastro', 'erro', dados.erro || 'Erro ao criar conta.');
+      }
+    } catch {
+      mostrarAlerta('cadastro', 'erro', 'Não foi possível conectar ao servidor.');
+    } finally {
+      setBtn('tela-cadastro', false);
+    }
+  };
+
+  // -------------------------------------------------
+  // Funções auxiliares
+  // -------------------------------------------------
+  function mostrarAlerta(tela, tipo, mensagem) {
+    ['erro', 'sucesso'].forEach(t => {
+      const el = document.getElementById(`${t}-${tela}`);
+      el.style.display = 'none';
+      el.textContent = '';
+    });
+    if (tipo && mensagem) {
+      const el = document.getElementById(`${tipo}-${tela}`);
+      el.textContent = mensagem;
+      el.style.display = 'block';
+    }
+  }
+
+  function setBtn(telaId, desativado) {
+    document.querySelector(`#${telaId} .btn`).disabled = desativado;
+  }
+
+  function traduzirErroFirebase(codigo) {
+    const erros = {
+      'auth/user-not-found':   'Nenhuma conta encontrada com este e-mail.',
+      'auth/wrong-password':   'Senha incorreta.',
+      'auth/invalid-email':    'E-mail inválido.',
+      'auth/too-many-requests':'Muitas tentativas. Tente novamente mais tarde.',
+      'auth/network-request-failed': 'Sem conexão com a internet.',
+    };
+    return erros[codigo] || 'Erro ao fazer login. Tente novamente.';
+  }
+</script>
+
+<script>
+  // Fora do módulo para ser acessível globalmente
+  function trocarAba(aba) {
+    document.querySelectorAll('.aba').forEach((el, i) => {
+      el.classList.toggle('ativa', (aba === 'login' ? 0 : 1) === i);
+    });
+    document.getElementById('tela-login').classList.toggle('ativa',    aba === 'login');
+    document.getElementById('tela-cadastro').classList.toggle('ativa', aba === 'cadastro');
+    document.getElementById('titulo-pagina').textContent    = aba === 'login' ? 'Bem-vindo de volta' : 'Crie sua conta';
+    document.getElementById('subtitulo-pagina').textContent = aba === 'login' ? 'Entre na sua conta para continuar' : 'Preencha os dados abaixo';
+  }
+</script>
+
+</body>
+</html>
