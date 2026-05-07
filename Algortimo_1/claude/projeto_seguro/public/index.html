@@ -1,0 +1,687 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <title>Login Seguro</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ─── RESET & VARIABLES ───────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:         #0a0a0f;
+      --surface:    #111118;
+      --border:     #1e1e2e;
+      --accent:     #c8a96e;
+      --accent-dim: #8a6f3e;
+      --text:       #e8e6df;
+      --muted:      #6b6878;
+      --error:      #e07070;
+      --success:    #70c080;
+      --radius:     14px;
+      --transition: 0.25s cubic-bezier(.4,0,.2,1);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.5rem;
+      overflow: hidden;
+    }
+
+    /* ─── BACKGROUND TEXTURE ──────────────────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 20% 10%, rgba(200,169,110,0.07) 0%, transparent 60%),
+        radial-gradient(ellipse 60% 80% at 80% 90%, rgba(100,80,160,0.08) 0%, transparent 60%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ─── CARD ────────────────────────────────────────────────── */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 2.5rem 2.25rem;
+      box-shadow:
+        0 0 0 1px rgba(255,255,255,.03),
+        0 32px 64px rgba(0,0,0,.5),
+        0 0 80px rgba(200,169,110,0.04);
+      animation: cardIn .5s cubic-bezier(.22,1,.36,1) both;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(.97); }
+      to   { opacity: 1; transform: translateY(0)   scale(1); }
+    }
+
+    /* ─── HEADER ──────────────────────────────────────────────── */
+    .card-header { text-align: center; margin-bottom: 2rem; }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 52px; height: 52px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+      border-radius: 14px;
+      margin-bottom: 1.25rem;
+      box-shadow: 0 4px 24px rgba(200,169,110,.25);
+    }
+
+    .logo svg { width: 26px; height: 26px; fill: #0a0a0f; }
+
+    h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.75rem;
+      letter-spacing: -.01em;
+      color: var(--text);
+      line-height: 1.2;
+      margin-bottom: .4rem;
+    }
+
+    .subtitle {
+      font-size: .875rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+
+    /* ─── TABS ────────────────────────────────────────────────── */
+    .tabs {
+      display: flex;
+      gap: .5rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 1.75rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: .55rem;
+      border: none;
+      border-radius: 7px;
+      background: transparent;
+      color: var(--muted);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--text);
+      box-shadow: 0 2px 8px rgba(0,0,0,.3);
+    }
+
+    .tab-btn:hover:not(.active) { color: var(--text); }
+
+    /* ─── PANELS ──────────────────────────────────────────────── */
+    .panel { display: none; animation: fadeIn .3s ease both; }
+    .panel.active { display: block; }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ─── FORM ELEMENTS ───────────────────────────────────────── */
+    .field { margin-bottom: 1.1rem; }
+
+    label {
+      display: block;
+      font-size: .78rem;
+      font-weight: 500;
+      letter-spacing: .04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: .45rem;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-wrap input {
+      width: 100%;
+      padding: .75rem 1rem .75rem 2.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      outline: none;
+      transition: var(--transition);
+      -webkit-appearance: none;
+    }
+
+    .input-wrap input:focus {
+      border-color: var(--accent-dim);
+      box-shadow: 0 0 0 3px rgba(200,169,110,.1);
+    }
+
+    .input-wrap input::placeholder { color: var(--muted); opacity: .7; }
+
+    .input-icon {
+      position: absolute;
+      left: .85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+      pointer-events: none;
+      transition: color var(--transition);
+    }
+
+    .input-wrap:focus-within .input-icon { color: var(--accent-dim); }
+
+    .input-wrap.has-toggle input { padding-right: 2.75rem; }
+
+    .toggle-pw {
+      position: absolute;
+      right: .85rem;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      color: var(--muted);
+      padding: 0;
+      line-height: 0;
+      transition: color var(--transition);
+    }
+
+    .toggle-pw:hover { color: var(--accent); }
+
+    /* ─── PASSWORD STRENGTH ───────────────────────────────────── */
+    .strength-bar {
+      display: flex;
+      gap: 4px;
+      margin-top: .5rem;
+      height: 3px;
+    }
+
+    .strength-bar span {
+      flex: 1;
+      border-radius: 2px;
+      background: var(--border);
+      transition: background .4s ease;
+    }
+
+    .strength-label {
+      font-size: .72rem;
+      color: var(--muted);
+      margin-top: .3rem;
+      min-height: 1em;
+    }
+
+    /* ─── ALERT ───────────────────────────────────────────────── */
+    .alert {
+      padding: .7rem 1rem;
+      border-radius: 8px;
+      font-size: .85rem;
+      margin-bottom: 1.1rem;
+      display: none;
+      line-height: 1.4;
+    }
+
+    .alert.show { display: block; animation: fadeIn .25s ease; }
+    .alert.error   { background: rgba(224,112,112,.1); border: 1px solid rgba(224,112,112,.3); color: var(--error); }
+    .alert.success { background: rgba(112,192,128,.1); border: 1px solid rgba(112,192,128,.3); color: var(--success); }
+
+    /* ─── BUTTON ──────────────────────────────────────────────── */
+    .btn {
+      width: 100%;
+      padding: .8rem;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+      border: none;
+      border-radius: 9px;
+      color: #0a0a0f;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .9rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      margin-top: .5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .btn:hover { filter: brightness(1.1); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(200,169,110,.25); }
+    .btn:active { transform: translateY(0); filter: brightness(.95); }
+    .btn:disabled { opacity: .5; cursor: not-allowed; transform: none; filter: none; box-shadow: none; }
+
+    .btn .spinner {
+      display: none;
+      width: 16px; height: 16px;
+      border: 2px solid rgba(10,10,15,.3);
+      border-top-color: #0a0a0f;
+      border-radius: 50%;
+      animation: spin .6s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    .btn.loading .btn-text { display: none; }
+    .btn.loading .spinner { display: block; }
+
+    /* ─── DASHBOARD ───────────────────────────────────────────── */
+    #dashboard {
+      display: none;
+      text-align: center;
+    }
+
+    #dashboard.show { display: block; animation: cardIn .4s cubic-bezier(.22,1,.36,1) both; }
+
+    .welcome-icon {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    #dashboard h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 1.5rem;
+      margin-bottom: .5rem;
+    }
+
+    #dashboard p {
+      color: var(--muted);
+      font-size: .9rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .user-badge {
+      display: inline-block;
+      background: rgba(200,169,110,.1);
+      border: 1px solid rgba(200,169,110,.2);
+      color: var(--accent);
+      padding: .35rem .9rem;
+      border-radius: 100px;
+      font-size: .82rem;
+      font-weight: 500;
+      margin-bottom: 1.75rem;
+    }
+
+    .logout-btn {
+      background: none;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      padding: .65rem 1.5rem;
+      border-radius: 9px;
+      cursor: pointer;
+      font-family: 'DM Sans', sans-serif;
+      font-size: .875rem;
+      transition: var(--transition);
+    }
+
+    .logout-btn:hover { border-color: var(--error); color: var(--error); }
+
+    /* ─── FOOTER ──────────────────────────────────────────────── */
+    .card-footer {
+      text-align: center;
+      margin-top: 1.5rem;
+      font-size: .75rem;
+      color: var(--muted);
+    }
+
+    .card-footer a {
+      color: var(--accent-dim);
+      text-decoration: none;
+    }
+
+    .card-footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<!-- ═══ CARD ════════════════════════════════════════════════════════════════ -->
+<div class="card" id="auth-card">
+  <div class="card-header">
+    <div class="logo">
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12 1a5 5 0 0 1 5 5v2h1a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V10a2 2 0 0 1 2-2h1V6a5 5 0 0 1 5-5zm0 2a3 3 0 0 0-3 3v2h6V6a3 3 0 0 0-3-3zm0 9a2 2 0 1 0 0 4 2 2 0 0 0 0-4z"/>
+      </svg>
+    </div>
+    <h1>Área Segura</h1>
+    <p class="subtitle">Acesso protegido com criptografia</p>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" id="tab-login" onclick="switchTab('login')">Entrar</button>
+    <button class="tab-btn" id="tab-register" onclick="switchTab('register')">Cadastrar</button>
+  </div>
+
+  <!-- ── PANEL LOGIN ─────────────────────────────────────────── -->
+  <div class="panel active" id="panel-login">
+    <div class="alert" id="login-alert"></div>
+
+    <div class="field">
+      <label for="login-email">E-mail</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/>
+          </svg>
+        </span>
+        <input type="email" id="login-email" placeholder="seu@email.com"
+               autocomplete="email" maxlength="254" required />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="login-password">Senha</label>
+      <div class="input-wrap has-toggle">
+        <span class="input-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input type="password" id="login-password" placeholder="••••••••"
+               autocomplete="current-password" maxlength="128" required />
+        <button type="button" class="toggle-pw" onclick="togglePw('login-password', this)" aria-label="Mostrar senha">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn" id="btn-login" onclick="doLogin()">
+      <span class="btn-text">Entrar</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <!-- ── PANEL REGISTER ──────────────────────────────────────── -->
+  <div class="panel" id="panel-register">
+    <div class="alert" id="register-alert"></div>
+
+    <div class="field">
+      <label for="reg-email">E-mail</label>
+      <div class="input-wrap">
+        <span class="input-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 7L2 7"/>
+          </svg>
+        </span>
+        <input type="email" id="reg-email" placeholder="seu@email.com"
+               autocomplete="email" maxlength="254" required />
+      </div>
+    </div>
+
+    <div class="field">
+      <label for="reg-password">Senha</label>
+      <div class="input-wrap has-toggle">
+        <span class="input-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input type="password" id="reg-password" placeholder="••••••••"
+               autocomplete="new-password" maxlength="128" required
+               oninput="checkStrength(this.value)" />
+        <button type="button" class="toggle-pw" onclick="togglePw('reg-password', this)" aria-label="Mostrar senha">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+      <div class="strength-bar">
+        <span id="s1"></span><span id="s2"></span>
+        <span id="s3"></span><span id="s4"></span>
+      </div>
+      <p class="strength-label" id="strength-label"></p>
+    </div>
+
+    <div class="field">
+      <label for="reg-confirm">Confirmar Senha</label>
+      <div class="input-wrap has-toggle">
+        <span class="input-icon">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+        </span>
+        <input type="password" id="reg-confirm" placeholder="••••••••"
+               autocomplete="new-password" maxlength="128" required />
+        <button type="button" class="toggle-pw" onclick="togglePw('reg-confirm', this)" aria-label="Mostrar senha">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <button class="btn" id="btn-register" onclick="doRegister()">
+      <span class="btn-text">Criar Conta</span>
+      <span class="spinner"></span>
+    </button>
+  </div>
+
+  <div class="card-footer">
+    Sistema protegido. <a href="#" onclick="return false;">Política de Privacidade</a>
+  </div>
+</div>
+
+<!-- ═══ DASHBOARD (pós-login) ══════════════════════════════════════════════ -->
+<div class="card" id="dashboard">
+  <div class="welcome-icon">🔓</div>
+  <h2>Bem-vindo!</h2>
+  <p>Você está autenticado com segurança.</p>
+  <div class="user-badge" id="user-email-badge"></div>
+  <br/>
+  <button class="logout-btn" onclick="doLogout()">Sair da conta</button>
+</div>
+
+<!-- ═══ JAVASCRIPT ══════════════════════════════════════════════════════════ -->
+<script>
+  // ── Token armazenado apenas em memória (não em localStorage por segurança)
+  // NOTA: Para persistência entre abas, sessionStorage é aceitável para tokens
+  // de curta duração. Evite localStorage para tokens de autenticação.
+  let authToken = null;
+
+  const API = '/api/auth';
+
+  // ── INIT: verificar se já há sessão ──────────────────────────────────────
+  window.addEventListener('DOMContentLoaded', () => {
+    const saved = sessionStorage.getItem('__auth_tk');
+    if (saved) { authToken = saved; showDashboard(); }
+  });
+
+  // ── SWITCH TAB ───────────────────────────────────────────────────────────
+  function switchTab(tab) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + tab).classList.add('active');
+    document.getElementById('panel-' + tab).classList.add('active');
+    clearAlerts();
+  }
+
+  // ── TOGGLE PASSWORD VISIBILITY ────────────────────────────────────────────
+  function togglePw(inputId, btn) {
+    const input = document.getElementById(inputId);
+    const isText = input.type === 'text';
+    input.type = isText ? 'password' : 'text';
+    // Troca o ícone
+    btn.innerHTML = isText
+      ? `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`
+      : `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
+  }
+
+  // ── PASSWORD STRENGTH ─────────────────────────────────────────────────────
+  function checkStrength(pw) {
+    let score = 0;
+    if (pw.length >= 8)  score++;
+    if (pw.length >= 12) score++;
+    if (/[A-Z]/.test(pw) && /[a-z]/.test(pw)) score++;
+    if (/[0-9]/.test(pw)) score++;
+    if (/[^A-Za-z0-9]/.test(pw)) score++;
+
+    const bars = [document.getElementById('s1'), document.getElementById('s2'),
+                  document.getElementById('s3'), document.getElementById('s4')];
+    const colors = ['#e07070', '#e09f70', '#e0cc70', '#70c080'];
+    const labels = ['', 'Fraca', 'Média', 'Boa', 'Forte'];
+
+    const level = Math.min(Math.ceil(score / 5 * 4), 4);
+    bars.forEach((b, i) => {
+      b.style.background = i < level ? colors[level - 1] : 'var(--border)';
+    });
+    document.getElementById('strength-label').textContent = labels[level] || '';
+  }
+
+  // ── HELPERS ──────────────────────────────────────────────────────────────
+  function showAlert(id, msg, type) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.className = 'alert ' + type + ' show';
+  }
+
+  function clearAlerts() {
+    document.querySelectorAll('.alert').forEach(a => a.className = 'alert');
+  }
+
+  function setLoading(btnId, loading) {
+    const btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    btn.classList.toggle('loading', loading);
+  }
+
+  // Sanitiza texto para exibição (previne XSS ao inserir no DOM)
+  function sanitize(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  // ── LOGIN ─────────────────────────────────────────────────────────────────
+  async function doLogin() {
+    clearAlerts();
+    const email    = document.getElementById('login-email').value.trim();
+    const password = document.getElementById('login-password').value;
+
+    if (!email || !password) {
+      showAlert('login-alert', 'Preencha todos os campos.', 'error');
+      return;
+    }
+
+    setLoading('btn-login', true);
+
+    try {
+      const res = await fetch(API + '/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+        // NÃO enviamos dados extras ou headers desnecessários
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        showAlert('login-alert', data.error || 'Erro ao fazer login.', 'error');
+        return;
+      }
+
+      authToken = data.token;
+      sessionStorage.setItem('__auth_tk', authToken);
+      showDashboard(data.user?.email);
+
+    } catch (err) {
+      showAlert('login-alert', 'Erro de conexão. Tente novamente.', 'error');
+    } finally {
+      setLoading('btn-login', false);
+    }
+  }
+
+  // ── REGISTER ─────────────────────────────────────────────────────────────
+  async function doRegister() {
+    clearAlerts();
+    const email    = document.getElementById('reg-email').value.trim();
+    const password = document.getElementById('reg-password').value;
+    const confirm  = document.getElementById('reg-confirm').value;
+
+    if (!email || !password || !confirm) {
+      showAlert('register-alert', 'Preencha todos os campos.', 'error');
+      return;
+    }
+
+    if (password !== confirm) {
+      showAlert('register-alert', 'As senhas não coincidem.', 'error');
+      return;
+    }
+
+    setLoading('btn-register', true);
+
+    try {
+      const res = await fetch(API + '/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) {
+        const msg = data.details ? data.details.join(' ') : (data.error || 'Erro ao cadastrar.');
+        showAlert('register-alert', msg, 'error');
+        return;
+      }
+
+      showAlert('register-alert', data.message, 'success');
+      setTimeout(() => switchTab('login'), 2000);
+
+    } catch (err) {
+      showAlert('register-alert', 'Erro de conexão. Tente novamente.', 'error');
+    } finally {
+      setLoading('btn-register', false);
+    }
+  }
+
+  // ── DASHBOARD / LOGOUT ────────────────────────────────────────────────────
+  function showDashboard(email) {
+    document.getElementById('auth-card').style.display = 'none';
+    const dash = document.getElementById('dashboard');
+    dash.classList.add('show');
+    if (email) {
+      document.getElementById('user-email-badge').textContent = email;
+    }
+  }
+
+  function doLogout() {
+    authToken = null;
+    sessionStorage.removeItem('__auth_tk');
+    document.getElementById('dashboard').classList.remove('show');
+    document.getElementById('auth-card').style.display = '';
+    document.getElementById('login-email').value = '';
+    document.getElementById('login-password').value = '';
+    switchTab('login');
+  }
+
+  // ── ENTER KEY ─────────────────────────────────────────────────────────────
+  document.addEventListener('keydown', (e) => {
+    if (e.key !== 'Enter') return;
+    const panel = document.querySelector('.panel.active');
+    if (panel?.id === 'panel-login')    doLogin();
+    if (panel?.id === 'panel-register') doRegister();
+  });
+</script>
+</body>
+</html>

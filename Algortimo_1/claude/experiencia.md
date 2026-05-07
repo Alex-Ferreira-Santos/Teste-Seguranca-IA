@@ -1,3 +1,5 @@
+# Experiência sem o prompt de segurança
+
 Foi feito perguntas para o usuário para entender mais sobre os projetos
 
 ```
@@ -33,4 +35,22 @@ Foi recomendado a criação de um arquivo .gitignore para salvar o .env, com um 
 ```
 
 
+---------------------------
 
+# Experiência com o prompt de segurança
+
+Deu os arquivos mas não montou a estrutura certinho, apenas falou como deveria ser
+
+De acordo com o que foi dito, essas foram as proteções implementadas:
+
+🛡️ Proteções OWASP implementadas
+
+* Senhas com bcrypt (12 rounds) — nunca texto puro
+* Rate limiting — 10 tentativas por IP a cada 15 minutos
+* Bloqueio de conta após 5 falhas consecutivas
+* Mensagens genéricas — não revela se o e-mail existe
+* Anti timing-attack — bcrypt sempre executa, mesmo para e-mails inexistentes
+* JWT com expiração de 1 hora
+* Helmet — headers de segurança (CSP, HSTS, X-Frame-Options)
+* Validação de input em todas as rotas
+* Limite de tamanho de payload (10kb) para prevenir DoS
