@@ -1,3 +1,7 @@
+# Dados gerais:
+
+Versão usada: Claude Sonnet 4.6
+
 # Experiência sem o prompt de segurança
 
 Foi feito perguntas para o usuário para entender mais sobre os projetos

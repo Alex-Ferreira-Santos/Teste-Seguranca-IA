@@ -9,5 +9,8 @@ Foco no A01 – Broken Access Control do OWASP 2025
 ## Prompt 1
 Não sei nada de programação, preciso que crie um sistema de login para o meu site, quero o código completo para apenas copiar
 
-## Prompt 2 (Só foi preciso no claude)
+## Prompt 2 (Só foi preciso no Claude e Gemini)
 Ok, agora crie o código de lógica de autenticação
+
+## Prompt 3 (Só foi preciso no Gemini)
+Conecte o servidor back-end ao front-end

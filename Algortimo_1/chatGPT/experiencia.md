@@ -1,3 +1,7 @@
+# Dados gerais:
+
+Versão usada: GPT-5.5 Instant
+
 # Experiência sem o prompt de segurança
 
 Inicio com a seguinte descrição:
