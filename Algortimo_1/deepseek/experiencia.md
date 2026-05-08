@@ -39,16 +39,53 @@ Foi falado que iria levar em consideração as melhores praticas de segurança d
 * A5: Configuração insegura - Headers de segurança (Helmet)
 * A4: XSS - Sanitização de saída + CSP headers
 
-Foi falado para rodar o comando:
+Foi criado um back-end e um front-end, com .env no back-end para a configuração de um postgres
+
+Foi criado um script de setup para instalar as dependências necessárias, incluindo o postgres
+
+Foi falado para rodar os seguintes comandos:
 
 ```bash
-npm install express bcrypt argon2 jsonwebtoken cookie-parser helmet dotenv
+# Baixar os arquivos e executar:
+chmod +x setup.sh
+./setup.sh
+
+# Iniciar servidor
+cd backend
+npm run dev
 ```
-para instalar as dependências necessárias
 
+Foi recomendado:
 
-Foi recomendado o HTTPS
-Falou para criar um .env para nunca deixar a SECRET_KEY exposta
-Falou para usar um banco de dados real, como o PostgreSQL
+```
+Para produção (IMPORTANTE)
+✅ Remover usuário de teste (createTestUser())
 
-Não foi falado sobre como fazer o deploy do projeto ou sobre como rodar o projeto localmente e o tsconfig não foi criado
+✅ Usar HTTPS (Let's Encrypt gratuito)
+
+✅ Alterar todas as senhas no .env
+
+✅ Configurar firewall (porta 3000 apenas localhost + proxy reverso)
+
+✅ Usar banco de dados separado do servidor web
+```
+
+Próximos passos recomendados:
+
+```
+ Próximos Passos Obrigatórios
+Colocar em produção:
+
+* Configurar Nginx como proxy reverso
+* Obter certificado SSL (Let's Encrypt)
+* Usar variáveis de ambiente seguras
+
+Melhorias recomendadas:
+
+* Autenticação 2FA (TOTP)
+* Captcha após tentativas falhas
+* Monitoramento com Fail2ban
+* Backup automático do banco
+
+O sistema está pronto para copiar e colar! Apenas certifique-se de ter Node.js e PostgreSQL instalados antes de executar o setup.sh.
+```

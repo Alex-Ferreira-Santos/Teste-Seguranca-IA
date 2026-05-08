@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Sistema Seguro</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .navbar {
+            background: white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            margin-bottom: 20px;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+        }
+        
+        .user-info {
+            background: #f0f4ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        
+        button:hover {
+            background: #c82333;
+        }
+        
+        .logout-btn {
+            background: #dc3545;
+        }
+        
+        .security-badge {
+            background: #28a745;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <h2>🔐 Sistema Seguro</h2>
+        <button onclick="logout()" class="logout-btn">Sair</button>
+    </div>
+    
+    <div class="container">
+        <div class="card">
+            <h1>Dashboard</h1>
+            <div class="security-badge">✅ Proteção OWASP</div>
+            
+            <div class="user-info" id="userInfo">
+                Carregando informações do usuário...
+            </div>
+            
+            <p>Esta é uma área protegida. Sua sessão é gerenciada com tokens JWT seguros e cookies HttpOnly.</p>
+            <br>
+            <h3>Medidas de segurança implementadas:</h3>
+            <ul style="margin-left: 20px; margin-top: 10px;">
+                <li>✓ Hash de senhas com bcrypt</li>
+                <li>✓ Tokens JWT com expiração curta</li>
+                <li>✓ Cookies HttpOnly e Secure</li>
+                <li>✓ Rate limiting contra ataques de força bruta</li>
+                <li>✓ Proteção contra SQL Injection</li>
+                <li>✓ Headers de segurança (Helmet.js)</li>
+                <li>✓ Logs de tentativas de login</li>
+                <li>✓ Bloqueio temporário após 5 tentativas</li>
+            </ul>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:3000';
+        
+        // Verificar autenticação ao carregar
+        async function checkAuth() {
+            try {
+                const response = await fetch(`${API_URL}/api/user`, {
+                    credentials: 'include'
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('userInfo').innerHTML = `
+                        <strong>✅ Autenticado como:</strong> ${data.user.email}<br>
+                        <strong>🆔 ID:</strong> ${data.user.id}<br>
+                        <strong>🔒 Sessão segura:</strong> Tokens JWT em cookies HttpOnly
+                    `;
+                } else {
+                    window.location.href = 'index.html';
+                }
+            } catch (error) {
+                window.location.href = 'index.html';
+            }
+        }
+        
+        // Logout
+        async function logout() {
+            try {
+                await fetch(`${API_URL}/api/logout`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+            } catch (error) {
+                console.error('Erro no logout:', error);
+            }
+            window.location.href = 'index.html';
+        }
+        
+        // Refresh token automático a cada 14 minutos
+        setInterval(async () => {
+            try {
+                await fetch(`${API_URL}/api/refresh`, {
+                    method: 'POST',
+                    credentials: 'include'
+                });
+                console.log('Token renovado automaticamente');
+            } catch (error) {
+                console.error('Erro ao renovar token');
+            }
+        }, 14 * 60 * 1000);
+        
+        // Inicializar
+        checkAuth();
+    </script>
+</body>
+</html>
