@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Autenticação</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 50px auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .message {
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            display: none;
+        }
+
+        .message.show {
+            display: block;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .message.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 30px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 12px;
+            text-align: center;
+            cursor: pointer;
+            background: none;
+            border: none;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: #667eea;
+            border-bottom: 2px solid #667eea;
+            margin-bottom: -2px;
+        }
+
+        .panel {
+            display: none;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        .user-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .user-info p {
+            margin: 10px 0;
+        }
+
+        .user-info strong {
+            color: #667eea;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button-group button {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 20px;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Autenticação</h1>
+            <p>Login e Registro de Usuários</p>
+        </div>
+        
+        <div class="content">
+            <!-- Container de mensagens -->
+            <div id="messageContainer"></div>
+            
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" onclick="mudarTab('login')">Login</button>
+                <button class="tab" onclick="mudarTab('registro')">Cadastro</button>
+                <button class="tab" onclick="mudarTab('recuperar')">Recuperar Senha</button>
+            </div>
+            
+            <!-- Painel de Login -->
+            <div id="loginPanel" class="panel active">
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="loginEmail" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="loginSenha" placeholder="••••••" required>
+                    </div>
+                    <button type="submit">Entrar</button>
+                </form>
+            </div>
+            
+            <!-- Painel de Registro -->
+            <div id="registroPanel" class="panel">
+                <form id="registroForm">
+                    <div class="form-group">
+                        <label>Nome Completo</label>
+                        <input type="text" id="regNome" placeholder="Seu nome" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" id="regEmail" placeholder="seu@email.com" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Senha</label>
+                        <input type="password" id="regSenha" placeholder="Mínimo 6 caracteres" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Confirmar Senha</label>
+                        <input type="password" id="regConfirmarSenha" placeholder="Digite a senha novamente" required>
+                    </div>
+                    <button type="submit">Cadastrar</button>
+                </form>
+            </div>
+            
+            <!-- Painel de Recuperação -->
+            <div id="recuperarPanel" class="panel">
+                <form id="recuperarForm">
+                    <div class="form-group">
+                        <label>Email cadastrado</label>
+                        <input type="email" id="recEmail" placeholder="seu@email.com" required>
+                    </div>
+                    <button type="submit">Recuperar Senha</button>
+                </form>
+            </div>
+            
+            <!-- Painel do Dashboard (aparece quando logado) -->
+            <div id="dashboardPanel" class="panel">
+                <div class="user-info">
+                    <h3>Bem-vindo!</h3>
+                    <p><strong>Nome:</strong> <span id="dashboardNome"></span></p>
+                    <p><strong>Email:</strong> <span id="dashboardEmail"></span></p>
+                    <p><strong>Status:</strong> <span id="dashboardStatus"></span></p>
+                </div>
+                
+                <div class="button-group">
+                    <button onclick="alterarSenha()" class="btn-secondary">Alterar Senha</button>
+                    <button onclick="sair()" class="btn-danger">Sair</button>
+                </div>
+                
+                <div style="margin-top: 20px;">
+                    <button onclick="mostrarAdminPanel()" class="btn-secondary">Painel Admin</button>
+                </div>
+            </div>
+            
+            <!-- Painel Admin (opcional) -->
+            <div id="adminPanel" class="panel">
+                <h3>Painel Administrativo</h3>
+                <div id="listaUsuarios"></div>
+                <button onclick="fecharAdminPanel()" class="btn-secondary">Voltar</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="auth.js"></script>
+    <script>
+        // Inicialização
+        let auth = window.auth;
+        
+        // Verificar se já está logado
+        verificarSessao();
+        
+        // Configurar eventos dos formulários
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fazerLogin();
+        });
+        
+        document.getElementById('registroForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            fazerRegistro();
+        });
+        
+        document.getElementById('recuperarForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            recuperarSenha();
+        });
+        
+        // Funções principais
+        function fazerLogin() {
+            const email = document.getElementById('loginEmail').value;
+            const senha = document.getElementById('loginSenha').value;
+            
+            const resultado = auth.login(email, senha);
+            
+            if (resultado.sucesso) {
+                mostrarMensagem('success', resultado.mensagem);
+                setTimeout(() => {
+                    verificarSessao();
+                }, 1000);
+            } else {
+                mostrarMensagemErros(resultado.erros);
+            }
+        }
+        
+        function fazerRegistro() {
+            const nome = document.getElementById('regNome').value;
+            const email = document.getElementById('regEmail').value;
+            const senha = document.getElementById('regSenha').value;
+            const confirmarSenha = document.getElementById('regConfirmarSenha').value;
+            
+            const resultado = auth.registrar(nome, email, senha, confirmarSenha);
+            
+            if (resultado.sucesso) {
+                mostrarMensagem('success', resultado.mensagem);
+                document.getElementById('registroForm').reset();
+                setTimeout(() => {
+                    mudarTab('login');
+                }, 2000);
+            } else {
+                mostrarMensagemErros(resultado.erros);
+            }
+        }
+        
+        function recuperarSenha() {
+            const email = document.getElementById('recEmail').value;
+            const resultado = auth.recuperarSenha(email);
+            
+            if (resultado.sucesso) {
+                mostrarMensagem('success', resultado.mensagem);
+                document.getElementById('recuperarForm').reset();
+            } else {
+                mostrarMensagemErros(resultado.erros);
+            }
+        }
+        
+        function alterarSenha() {
+            const novaSenha = prompt('Digite a nova senha (mínimo 6 caracteres com letras e números):');
+            if (novaSenha) {
+                const confirmar = prompt('Confirme a nova senha:');
+                if (novaSenha === confirmar) {
+                    const usuario = auth.getUsuarioAtual();
+                    const resultado = auth.alterarSenha(usuario.email, '', novaSenha);
+                    
+                    if (resultado.sucesso) {
+                        mostrarMensagem('success', resultado.mensagem);
+                    } else {
+                        mostrarMensagemErros(resultado.erros);
+                    }
+                } else {
+                    mostrarMensagem('error', 'As senhas não coincidem');
+                }
+            }
+        }
+        
+        function sair() {
+            auth.logout();
+            mostrarMensagem('success', 'Logout realizado com sucesso');
+            verificarSessao();
+        }
+        
+        function verificarSessao() {
+            if (auth.estaLogado()) {
+                const usuario = auth.getUsuarioAtual();
+                document.getElementById('dashboardNome').innerText = usuario.nome;
+                document.getElementById('dashboardEmail').innerText = usuario.email;
+                document.getElementById('dashboardStatus').innerHTML = '<span style="color: green;">● Logado</span>';
+                
+                // Mostrar dashboard, esconder outros
+                document.getElementById('loginPanel').classList.remove('active');
+                document.getElementById('registroPanel').classList.remove('active');
+                document.getElementById('recuperarPanel').classList.remove('active');
+                document.getElementById('dashboardPanel').classList.add('active');
+                document.getElementById('adminPanel').classList.remove('active');
+                
+                // Esconder tabs
+                document.querySelector('.tabs').style.display = 'none';
+            } else {
+                document.getElementById('dashboardPanel').classList.remove('active');
+                document.getElementById('loginPanel').classList.add('active');
+                document.querySelector('.tabs').style.display = 'flex';
+                mudarTab('login');
+            }
+        }
+        
+        function mostrarAdminPanel() {
+            const usuarios = auth.listarUsuarios();
+            const listaHtml = `
+                <h4>Usuários Cadastrados (${usuarios.length})</h4>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    ${usuarios.map(u => `
+                        <div style="border-bottom: 1px solid #e0e0e0; padding: 10px;">
+                            <strong>${u.nome}</strong><br>
+                            Email: ${u.email}<br>
+                            Cadastro: ${new Date(u.dataCadastro).toLocaleDateString()}<br>
+                            Status: ${u.ativo ? 'Ativo' : 'Inativo'}
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            document.getElementById('listaUsuarios').innerHTML = listaHtml;
+            document.getElementById('dashboardPanel').classList.remove('active');
+            document.getElementById('adminPanel').classList.add('active');
+        }
+        
+        function fecharAdminPanel() {
+            document.getElementById('adminPanel').classList.remove('active');
+            document.getElementById('dashboardPanel').classList.add('active');
+        }
+        
+        function mudarTab(tab) {
+            // Atualizar tabs
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Mostrar painel correto
+            document.getElementById('loginPanel').classList.remove('active');
+            document.getElementById('registroPanel').classList.remove('active');
+            document.getElementById('recuperarPanel').classList.remove('active');
+            
+            if (tab === 'login') {
+                document.getElementById('loginPanel').classList.add('active');
+            } else if (tab === 'registro') {
+                document.getElementById('registroPanel').classList.add('active');
+            } else if (tab === 'recuperar') {
+                document.getElementById('recuperarPanel').classList.add('active');
+            }
+            
+            // Limpar mensagens
+            document.getElementById('messageContainer').innerHTML = '';
+        }
+        
+        function mostrarMensagem(tipo, texto) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `
+                <div class="message ${tipo} show">
+                    ${texto}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+        
+        function mostrarMensagemErros(erros) {
+            const container = document.getElementById('messageContainer');
+            container.innerHTML = `
+                <div class="message error show">
+                    ${erros.map(erro => `• ${erro}<br>`).join('')}
+                </div>
+            `;
+            
+            setTimeout(() => {
+                container.innerHTML = '';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>
