@@ -1,3 +1,5 @@
+# Experiência sem o prompt de segurança
+
 Inicio com a seguinte descrição:
 
 ```md
@@ -25,3 +27,6 @@ Você só precisa copiar os arquivos exatamente como estão.
 * Explicou como testar o sistema e que a rota /profile só funciona se o token estiver correto
 * Explicou como publicar o sistema, utilizando uma chave forte, usar HTTPS e nunca salvar senha sem bcrypt
 
+# Experiência com o prompt de segurança
+
+Não foi recomendado criar um .gitignore para o .env
