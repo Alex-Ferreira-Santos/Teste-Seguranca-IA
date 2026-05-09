@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comentários</title>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #f5f3ee;
+      --surface: #ffffff;
+      --border: #e0ddd5;
+      --text: #1a1814;
+      --muted: #6b6760;
+      --accent: #2d5a3d;
+      --accent-light: #e8f0ea;
+      --danger: #991b1b;
+      --danger-bg: #fef2f2;
+      --radius: 10px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      font-family: 'DM Sans', system-ui, sans-serif;
+      color: var(--text);
+      min-height: 100vh;
+      padding: 3rem 1.5rem;
+    }
+    .wrapper { max-width: 680px; margin: 0 auto; }
+    h1 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 2rem;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.25rem;
+    }
+    .sub { font-size: 0.875rem; color: var(--muted); margin-bottom: 2rem; }
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.75rem;
+      margin-bottom: 2.5rem;
+    }
+    .field { margin-bottom: 1.25rem; }
+    .row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    label {
+      display: block;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 0.45rem;
+    }
+    input, textarea {
+      width: 100%;
+      font-family: inherit;
+      font-size: 0.9375rem;
+      color: var(--text);
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 0.65rem 0.875rem;
+      outline: none;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      resize: vertical;
+    }
+    input:focus, textarea:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(45,90,61,0.12);
+    }
+    input.err, textarea.err { border-color: var(--danger); }
+    textarea { min-height: 120px; }
+    .char { font-size: 0.75rem; color: var(--muted); text-align: right; margin-top: 0.3rem; }
+    .char.warn { color: #b45309; }
+    .char.over  { color: var(--danger); }
+    .field-err { font-size: 0.78rem; color: var(--danger); margin-top: 0.35rem; display: none; }
+    .field-err.show { display: block; }
+    .honeypot { display: none !important; }
+    .btn {
+      font-family: inherit;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #fff;
+      background: var(--accent);
+      border: none;
+      border-radius: 6px;
+      padding: 0.7rem 1.75rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: background 0.15s;
+    }
+    .btn:hover { background: #234832; }
+    .btn:disabled { background: var(--muted); cursor: not-allowed; }
+    .spinner {
+      width: 14px; height: 14px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .alert {
+      padding: 0.85rem 1rem;
+      border-radius: 6px;
+      font-size: 0.875rem;
+      margin-bottom: 1.25rem;
+      display: none;
+    }
+    .alert.ok  { background: var(--accent-light); color: #1a3a26; border: 1px solid #a7c4ae; display: block; }
+    .alert.err { background: var(--danger-bg);    color: var(--danger); border: 1px solid #fecaca; display: block; }
+    h2 {
+      font-family: 'DM Serif Display', Georgia, serif;
+      font-size: 1.35rem;
+      margin-bottom: 1.25rem;
+    }
+    .comment { border-bottom: 1px solid var(--border); padding: 1.25rem 0; }
+    .comment:last-child { border-bottom: none; }
+    .meta { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.5rem; }
+    .avatar {
+      width: 34px; height: 34px;
+      border-radius: 50%;
+      background: var(--accent-light);
+      color: var(--accent);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.8125rem; font-weight: 500; flex-shrink: 0;
+    }
+    .author { font-weight: 500; font-size: 0.9375rem; }
+    .date   { font-size: 0.8125rem; color: var(--muted); }
+    .body   { font-size: 0.9375rem; line-height: 1.65; padding-left: calc(34px + 0.75rem); }
+    .empty  { color: var(--muted); font-size: 0.9375rem; }
+    @media (max-width: 520px) { .row { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+<div class="wrapper">
+  <h1>Comentários</h1>
+  <p class="sub">Sua opinião é moderada antes de aparecer publicamente.</p>
+
+  <div id="alert" class="alert" role="alert" aria-live="polite"></div>
+
+  <div class="card">
+    <form id="form" novalidate autocomplete="off">
+      <input type="hidden" id="csrf" name="_csrf" value="" />
+
+      <!-- Honeypot invisível -->
+      <div class="honeypot" aria-hidden="true">
+        <input type="text" name="website" tabindex="-1" autocomplete="off" />
+      </div>
+
+      <div class="row">
+        <div class="field">
+          <label for="f-name">Nome *</label>
+          <input type="text" id="f-name" name="author_name" maxlength="80" required placeholder="Seu nome" />
+          <span class="field-err" id="e-name"></span>
+        </div>
+        <div class="field">
+          <label for="f-email">E-mail *</label>
+          <input type="email" id="f-email" name="author_email" maxlength="254" required placeholder="seu@email.com" />
+          <span class="field-err" id="e-email"></span>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="f-body">Comentário *</label>
+        <textarea id="f-body" name="body" maxlength="2000" required placeholder="Escreva seu comentário…"></textarea>
+        <div class="char" id="char">0 / 2000</div>
+        <span class="field-err" id="e-body"></span>
+      </div>
+
+      <button type="submit" class="btn" id="btn">
+        <span id="btn-txt">Enviar comentário</span>
+        <span class="spinner" id="spin" aria-hidden="true"></span>
+      </button>
+    </form>
+  </div>
+
+  <section>
+    <h2 id="comments-heading">Comentários</h2>
+    <div id="list"></div>
+  </section>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  const EMAIL_RE = /^[^\s@]{1,64}@[^\s@]{1,255}\.[^\s@]{2,}$/;
+  const MAX = 2000;
+
+  /* ── Busca o token CSRF ao carregar ── */
+  async function fetchCsrf() {
+    try {
+      const r = await fetch('/api/csrf-token', { credentials: 'same-origin' });
+      const d = await r.json();
+      document.getElementById('csrf').value = d.csrfToken ?? '';
+    } catch { /* servidor fora do ar */ }
+  }
+
+  /* ── Rate limit (camada de UI) ── */
+  const RL = { max: 3, windowMs: 60000, key: 'rl_comments' };
+  function isRateLimited() {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(RL.key) || '{"n":0,"t":0}');
+      if (Date.now() - d.t > RL.windowMs) return false;
+      return d.n >= RL.max;
+    } catch { return false; }
+  }
+  function bumpRate() {
+    try {
+      const d = JSON.parse(sessionStorage.getItem(RL.key) || '{"n":0,"t":0}');
+      const fresh = Date.now() - d.t > RL.windowMs;
+      sessionStorage.setItem(RL.key, JSON.stringify({ n: fresh ? 1 : d.n + 1, t: fresh ? Date.now() : d.t }));
+    } catch {}
+  }
+
+  /* ── Helpers de UI ── */
+  function safe(s) { return DOMPurify.sanitize(String(s||''), { ALLOWED_TAGS:[], ALLOWED_ATTR:[] }); }
+
+  function alert(type, msg) {
+    const el = document.getElementById('alert');
+    el.textContent = msg;
+    el.className = 'alert ' + type;
+  }
+
+  function fieldErr(id, msg) {
+    const el = document.getElementById(id);
+    el.textContent = msg;
+    el.classList.add('show');
+  }
+
+  function clearErrors() {
+    document.querySelectorAll('.field-err').forEach(e => { e.textContent=''; e.classList.remove('show'); });
+    document.querySelectorAll('.err').forEach(e => e.classList.remove('err'));
+  }
+
+  function setLoading(on) {
+    document.getElementById('btn').disabled = on;
+    document.getElementById('spin').style.display = on ? 'block' : 'none';
+    document.getElementById('btn-txt').textContent = on ? 'Enviando…' : 'Enviar comentário';
+  }
+
+  /* ── Contador de caracteres ── */
+  document.getElementById('f-body').addEventListener('input', function() {
+    const n = this.value.length;
+    const el = document.getElementById('char');
+    el.textContent = n + ' / ' + MAX;
+    el.className = 'char' + (n > MAX ? ' over' : n > MAX * 0.9 ? ' warn' : '');
+  });
+
+  /* ── Renderizar comentários ── */
+  function render(comments) {
+    const list = document.getElementById('list');
+    const heading = document.getElementById('comments-heading');
+    list.innerHTML = '';
+
+    if (!comments || !comments.length) {
+      heading.textContent = 'Comentários';
+      list.innerHTML = '<p class="empty">Nenhum comentário ainda. Seja o primeiro!</p>';
+      return;
+    }
+
+    heading.textContent = comments.length + ' comentário' + (comments.length > 1 ? 's' : '');
+
+    comments.forEach(function(c) {
+      const initials = safe(c.author_name).split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+      const item   = document.createElement('div');   item.className = 'comment';
+      const meta   = document.createElement('div');   meta.className = 'meta';
+      const avatar = document.createElement('div');   avatar.className = 'avatar';
+      avatar.textContent = initials;
+
+      const info   = document.createElement('div');
+      const author = document.createElement('div');   author.className = 'author';
+      author.textContent = safe(c.author_name);
+
+      const date   = document.createElement('div');   date.className = 'date';
+      date.textContent = new Date(c.created_at).toLocaleDateString('pt-BR',{day:'2-digit',month:'long',year:'numeric'});
+
+      const body   = document.createElement('p');     body.className = 'body';
+      body.textContent = safe(c.body);   /* textContent = escape automático */
+
+      info.append(author, date);
+      meta.append(avatar, info);
+      item.append(meta, body);
+      list.append(item);
+    });
+  }
+
+  /* ── Carregar comentários aprovados ── */
+  async function load() {
+    try {
+      const r = await fetch('/api/comments?page_id=' + encodeURIComponent(location.pathname), { credentials: 'same-origin' });
+      if (!r.ok) return;
+      const d = await r.json();
+      render(d.comments);
+    } catch {}
+  }
+
+  /* ── Envio do formulário ── */
+  document.getElementById('form').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    clearErrors();
+
+    if (isRateLimited()) {
+      alert('err', 'Muitas tentativas. Aguarde um momento.');
+      return;
+    }
+
+    const name     = document.getElementById('f-name').value;
+    const email    = document.getElementById('f-email').value;
+    const body     = document.getElementById('f-body').value;
+    const honeypot = this.website.value;
+    const csrf     = document.getElementById('csrf').value;
+
+    if (honeypot) return;
+
+    /* Validação cliente */
+    let ok = true;
+    if (!name.trim() || name.length > 80) {
+      fieldErr('e-name', 'Nome obrigatório (máx. 80 caracteres).');
+      document.getElementById('f-name').classList.add('err');
+      ok = false;
+    }
+    if (!EMAIL_RE.test(email)) {
+      fieldErr('e-email', 'Informe um e-mail válido.');
+      document.getElementById('f-email').classList.add('err');
+      ok = false;
+    }
+    if (!body.trim() || body.length < 5) {
+      fieldErr('e-body', 'Comentário muito curto (mín. 5 caracteres).');
+      document.getElementById('f-body').classList.add('err');
+      ok = false;
+    }
+    if (body.length > MAX) {
+      fieldErr('e-body', 'Comentário excede ' + MAX + ' caracteres.');
+      document.getElementById('f-body').classList.add('err');
+      ok = false;
+    }
+    if (!ok) return;
+
+    setLoading(true);
+    try {
+      const res = await fetch('/api/comments', {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-Requested-With': 'XMLHttpRequest',
+        },
+        body: JSON.stringify({
+          author_name:  name.trim().slice(0, 80),
+          author_email: email.trim().toLowerCase().slice(0, 254),
+          body:         body.trim().slice(0, MAX),
+          page_id:      location.pathname,
+          _csrf:        csrf,
+        }),
+      });
+
+      bumpRate();
+
+      if (res.status === 429) { alert('err', 'Muitas requisições. Tente em alguns minutos.'); return; }
+      if (res.status === 403) { alert('err', 'Sessão expirada. Recarregue a página e tente novamente.'); await fetchCsrf(); return; }
+
+      const data = await res.json();
+      if (!res.ok) { alert('err', safe(data.message) || 'Erro ao enviar. Tente novamente.'); return; }
+
+      this.reset();
+      document.getElementById('char').textContent = '0 / ' + MAX;
+      alert('ok', '✓ Comentário enviado! Ele aparecerá após moderação.');
+
+      /* Renova o CSRF após POST bem-sucedido */
+      await fetchCsrf();
+
+    } catch { alert('err', 'Erro de conexão. Verifique sua internet.'); }
+    finally  { setLoading(false); }
+  });
+
+  /* ── Init ── */
+  fetchCsrf();
+  load();
+})();
+</script>
+</body>
+</html>
