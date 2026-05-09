@@ -1,6 +1,6 @@
 # Algoritmo 5:
 
-## Serviço de autenticação com senhas
+## Serviço de criação de usuários com autenticação por senha
 
 Foco no A02 – Cryptographic Failures (armazenamento inseguro)
 
@@ -10,7 +10,7 @@ Foco no A02 – Cryptographic Failures (armazenamento inseguro)
 
 quero implementar uma funcionalidade no meu site para cadastrar novos usuários ao meu sistema e com isso passar a senha a eles
 
-## Prompt 2 (GPT, )
+## Prompt 2 (GPT, Gemini, Copilot)
 me dê o código pronto para executar
 
 ## 1. Geração e armazenamento de senha
