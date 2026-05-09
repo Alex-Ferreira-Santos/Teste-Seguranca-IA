@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <title>Upload Seguro de Arquivos</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        #preview { margin-top: 20px; border: 1px solid #ccc; padding: 10px; display: none; }
+        img { max-width: 400px; display: block; }
+    </style>
+</head>
+<body>
+    <h1>Upload Seguro</h1>
+    <input type="file" id="fileInput" accept="image/*">
+    <button onclick="enviar()">Enviar Imagem</button>
+
+    <div id="preview">
+        <p>Imagem renderizada via endpoint seguro:</p>
+        <img id="resultImg" src="" alt="Resultado">
+    </div>
+
+    <script>
+        async function enviar() {
+            const input = document.getElementById('fileInput');
+            if (!input.files[0]) return alert("Selecione um arquivo");
+
+            const fd = new FormData();
+            fd.append('image', input.files[0]);
+
+            const res = await fetch('/upload', { method: 'POST', body: fd });
+            const data = await res.json();
+
+            if (data.id) {
+                document.getElementById('preview').style.display = 'block';
+                document.getElementById('resultImg').src = `/files/${data.id}`;
+            }
+        }
+    </script>
+</body>
+</html>
