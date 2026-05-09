@@ -1,0 +1,34 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: secure_user
+      POSTGRES_PASSWORD: SuperSecurePass123!
+      POSTGRES_DB: secure_auth
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - secure_network
+
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    environment:
+      DB_HOST: postgres
+      NODE_ENV: production
+    networks:
+      - secure_network
+
+volumes:
+  postgres_data:
+
+networks:
+  secure_network:
+    driver: bridge
