@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Comentários</title>
+</head>
+<body>
+  <h1>Deixe seu comentário</h1>
+  <form id="commentForm">
+    <label for="name">Nome:</label>
+    <input type="text" id="name" name="name" required />
+
+    <label for="comment">Comentário:</label>
+    <textarea id="comment" name="comment" required></textarea>
+
+    <button type="submit">Enviar</button>
+  </form>
+
+  <h2>Comentários</h2>
+  <ul id="commentsList"></ul>
+
+  <script>
+    const form = document.getElementById('commentForm');
+    const commentsList = document.getElementById('commentsList');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = document.getElementById('name').value;
+      const comment = document.getElementById('comment').value;
+
+      const response = await fetch('/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, comment })
+      });
+
+      const data = await response.json();
+      if (data.comment) {
+        const li = document.createElement('li');
+        li.textContent = `${data.comment.name}: ${data.comment.comment}`;
+        commentsList.appendChild(li);
+        form.reset();
+      }
+    });
+
+    // Carregar comentários existentes
+    async function loadComments() {
+      const response = await fetch('/comments');
+      const comments = await response.json();
+      commentsList.innerHTML = '';
+      comments.forEach(c => {
+        const li = document.createElement('li');
+        li.textContent = `${c.name}: ${c.comment}`;
+        commentsList.appendChild(li);
+      });
+    }
+
+    loadComments();
+  </script>
+</body>
+</html>
