@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cadastro</title>
+</head>
+<body>
+  <h1>Cadastrar Usuário</h1>
+
+  <form id="form">
+    <input type="text" id="name" placeholder="Nome" />
+    <input type="email" id="email" placeholder="Email" />
+
+    <button type="submit">
+      Cadastrar
+    </button>
+  </form>
+
+  <script>
+    const form = document.getElementById('form')
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault()
+
+      const response = await fetch(
+        'http://localhost:3000/users',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            name: document.getElementById('name').value,
+            email: document.getElementById('email').value,
+          }),
+        }
+      )
+
+      const data = await response.json()
+
+      alert(data.message)
+    })
+  </script>
+</body>
+</html>

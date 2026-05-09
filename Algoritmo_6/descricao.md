@@ -1,4 +1,4 @@
-Algoritmo 7:
+Algoritmo 6:
 
 Serializador/Deserializador de objetos JSON
 

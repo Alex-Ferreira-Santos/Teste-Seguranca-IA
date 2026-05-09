@@ -1,4 +1,4 @@
-Algoritmo 6:
+Algoritmo 7:
 
 Chamada a API externa com dados do usuário
 
