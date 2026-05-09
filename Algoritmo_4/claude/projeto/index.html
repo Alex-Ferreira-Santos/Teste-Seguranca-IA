@@ -1,0 +1,465 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Comentários</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #f9f7f4;
+      --surface: #ffffff;
+      --ink: #1a1a18;
+      --ink-2: #4a4843;
+      --ink-3: #9a9891;
+      --border: #e4e1da;
+      --accent: #c84b1f;
+      --accent-bg: #fef2ed;
+      --green: #1D9E75;
+      --mono: 'DM Mono', monospace;
+      --serif: 'Lora', Georgia, serif;
+    }
+
+    body {
+      font-family: var(--mono);
+      background: var(--bg);
+      color: var(--ink);
+      min-height: 100vh;
+      padding: 48px 20px;
+    }
+
+    .page {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    /* ── Post simulado ── */
+    .post-header {
+      margin-bottom: 48px;
+      padding-bottom: 32px;
+      border-bottom: 2px solid var(--ink);
+    }
+
+    .post-tag {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .post-title {
+      font-family: var(--serif);
+      font-size: clamp(28px, 5vw, 42px);
+      font-weight: 600;
+      line-height: 1.2;
+      letter-spacing: -.02em;
+      color: var(--ink);
+      margin-bottom: 16px;
+    }
+
+    .post-meta {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    /* ── Seção de comentários ── */
+    .comments-section { margin-top: 56px; }
+
+    .section-header {
+      display: flex;
+      align-items: baseline;
+      gap: 12px;
+      margin-bottom: 32px;
+      padding-bottom: 14px;
+      border-bottom: 1.5px solid var(--ink);
+    }
+
+    .section-title {
+      font-size: 18px;
+      font-weight: 500;
+      letter-spacing: -.01em;
+    }
+
+    .count-badge {
+      font-size: 12px;
+      color: var(--ink-3);
+    }
+
+    /* ── Formulário ── */
+    .form-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 24px;
+      margin-bottom: 40px;
+    }
+
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    @media (max-width: 480px) { .form-grid { grid-template-columns: 1fr; } }
+
+    .field { display: flex; flex-direction: column; gap: 6px; }
+
+    label {
+      font-size: 10px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--ink-3);
+    }
+
+    input, textarea {
+      font-family: var(--mono);
+      font-size: 14px;
+      color: var(--ink);
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 6px;
+      padding: 10px 13px;
+      outline: none;
+      transition: border-color .15s;
+      width: 100%;
+    }
+
+    input:focus, textarea:focus { border-color: var(--ink); }
+    input.error, textarea.error { border-color: var(--accent); }
+
+    textarea {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.65;
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    .field-error {
+      font-size: 11px;
+      color: var(--accent);
+      display: none;
+    }
+
+    .field-error.visible { display: block; }
+
+    .form-footer {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-top: 14px;
+    }
+
+    .btn-submit {
+      font-family: var(--mono);
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .04em;
+      color: var(--bg);
+      background: var(--ink);
+      border: none;
+      border-radius: 6px;
+      padding: 11px 22px;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+    }
+
+    .btn-submit:hover { opacity: .85; }
+    .btn-submit:active { transform: scale(.98); }
+    .btn-submit:disabled { background: var(--border); color: var(--ink-3); cursor: not-allowed; }
+
+    .form-message {
+      font-size: 13px;
+      display: none;
+    }
+
+    .form-message.success { color: var(--green); display: block; }
+    .form-message.error-msg { color: var(--accent); display: block; }
+
+    /* ── Lista de comentários ── */
+    .comment {
+      display: flex;
+      gap: 14px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      animation: fadeIn .3s ease;
+    }
+
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 500;
+      letter-spacing: .05em;
+      flex-shrink: 0;
+    }
+
+    .comment-meta {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      margin-bottom: 7px;
+    }
+
+    .comment-author {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--ink);
+    }
+
+    .comment-time {
+      font-size: 11px;
+      color: var(--ink-3);
+    }
+
+    .comment-body {
+      font-family: var(--serif);
+      font-size: 15px;
+      line-height: 1.7;
+      color: var(--ink-2);
+    }
+
+    .btn-delete {
+      background: none;
+      border: none;
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--ink-3);
+      cursor: pointer;
+      padding: 0;
+      margin-top: 8px;
+      display: block;
+      transition: color .15s;
+    }
+
+    .btn-delete:hover { color: var(--accent); }
+
+    .empty-state {
+      padding: 48px 0;
+      text-align: center;
+      font-family: var(--serif);
+      font-style: italic;
+      color: var(--ink-3);
+      font-size: 15px;
+    }
+
+    .loading {
+      padding: 32px 0;
+      text-align: center;
+      font-size: 13px;
+      color: var(--ink-3);
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+
+    <!-- Post simulado -->
+    <header class="post-header">
+      <p class="post-tag">exemplo de post</p>
+      <h1 class="post-title">Como construir uma seção de comentários do zero</h1>
+      <p class="post-meta">9 de maio de 2026 · 5 min de leitura</p>
+    </header>
+
+    <!-- Seção de comentários -->
+    <section class="comments-section" id="comments">
+      <div class="section-header">
+        <h2 class="section-title">comentários</h2>
+        <span class="count-badge" id="count">—</span>
+      </div>
+
+      <!-- Formulário -->
+      <div class="form-card">
+        <div class="form-grid">
+          <div class="field">
+            <label for="name">Nome</label>
+            <input type="text" id="name" placeholder="Seu nome" autocomplete="name" />
+            <span class="field-error" id="err-name">Nome obrigatório (mín. 2 caracteres)</span>
+          </div>
+          <div class="field">
+            <label for="email">E-mail</label>
+            <input type="email" id="email" placeholder="seu@email.com" autocomplete="email" />
+            <span class="field-error" id="err-email">E-mail inválido</span>
+          </div>
+        </div>
+        <div class="field">
+          <label for="body">Comentário</label>
+          <textarea id="body" placeholder="Escreva seu comentário..."></textarea>
+          <span class="field-error" id="err-body">Comentário muito curto (mín. 5 caracteres)</span>
+        </div>
+        <div class="form-footer">
+          <button class="btn-submit" id="btn-submit">publicar comentário</button>
+          <span class="form-message" id="form-msg"></span>
+        </div>
+      </div>
+
+      <!-- Lista -->
+      <div id="comments-list">
+        <div class="loading">carregando comentários...</div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const POST_ID = "post-exemplo-1";
+    const API = "/api/comments";
+
+    const AVATAR_COLORS = [
+      ["#fef2ed", "#c84b1f"],
+      ["#e1f5ee", "#0f6e56"],
+      ["#eeedfe", "#534ab7"],
+      ["#fbeaf0", "#993556"],
+      ["#e6f1fb", "#185fa5"],
+      ["#faeeda", "#854f0b"],
+    ];
+
+    function getAvatarColors(name) {
+      return AVATAR_COLORS[name.charCodeAt(0) % AVATAR_COLORS.length];
+    }
+
+    function initials(name) {
+      return name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase();
+    }
+
+    function timeAgo(iso) {
+      const diff = (Date.now() - new Date(iso)) / 1000;
+      if (diff < 60) return "agora mesmo";
+      if (diff < 3600) return `${Math.floor(diff / 60)} min atrás`;
+      if (diff < 86400) return `${Math.floor(diff / 3600)}h atrás`;
+      return `${Math.floor(diff / 86400)}d atrás`;
+    }
+
+    function escapeHtml(str) {
+      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+    }
+
+    // ── Render ──────────────────────────────────────────────────────────────────
+
+    function renderComments(comments) {
+      const list = document.getElementById("comments-list");
+      const count = document.getElementById("count");
+      count.textContent = `${comments.length} ${comments.length === 1 ? "resposta" : "respostas"}`;
+
+      if (comments.length === 0) {
+        list.innerHTML = `<div class="empty-state">Seja o primeiro a comentar.</div>`;
+        return;
+      }
+
+      list.innerHTML = comments.map(c => {
+        const [bg, fg] = getAvatarColors(c.name);
+        return `
+          <div class="comment" id="c-${c.id}">
+            <div class="avatar" style="background:${bg};color:${fg}">${escapeHtml(initials(c.name))}</div>
+            <div style="flex:1;min-width:0">
+              <div class="comment-meta">
+                <span class="comment-author">${escapeHtml(c.name)}</span>
+                <span class="comment-time">${timeAgo(c.createdAt)}</span>
+              </div>
+              <p class="comment-body">${escapeHtml(c.body)}</p>
+              <button class="btn-delete" onclick="deleteComment('${c.id}')">remover</button>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    // ── Fetch ───────────────────────────────────────────────────────────────────
+
+    async function fetchComments() {
+      try {
+        const res = await fetch(`${API}?postId=${POST_ID}`);
+        const data = await res.json();
+        renderComments(data);
+      } catch {
+        document.getElementById("comments-list").innerHTML =
+          `<div class="empty-state">Não foi possível carregar os comentários.</div>`;
+      }
+    }
+
+    async function deleteComment(id) {
+      if (!confirm("Remover este comentário?")) return;
+      await fetch(`${API}/${id}`, { method: "DELETE" });
+      fetchComments();
+    }
+
+    // ── Form ────────────────────────────────────────────────────────────────────
+
+    function showError(field, show) {
+      document.getElementById(`err-${field}`).classList.toggle("visible", show);
+      document.getElementById(field).classList.toggle("error", show);
+    }
+
+    function validate() {
+      const name = document.getElementById("name").value;
+      const email = document.getElementById("email").value;
+      const body = document.getElementById("body").value;
+      let ok = true;
+      if (name.trim().length < 2) { showError("name", true); ok = false; } else showError("name", false);
+      if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) { showError("email", true); ok = false; } else showError("email", false);
+      if (body.trim().length < 5) { showError("body", true); ok = false; } else showError("body", false);
+      return ok;
+    }
+
+    document.getElementById("btn-submit").addEventListener("click", async () => {
+      if (!validate()) return;
+
+      const btn = document.getElementById("btn-submit");
+      const msg = document.getElementById("form-msg");
+      btn.disabled = true;
+      btn.textContent = "enviando...";
+      msg.className = "form-message";
+      msg.textContent = "";
+
+      try {
+        const res = await fetch(API, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            postId: POST_ID,
+            name: document.getElementById("name").value,
+            email: document.getElementById("email").value,
+            body: document.getElementById("body").value,
+          }),
+        });
+
+        const data = await res.json();
+
+        if (!res.ok) throw new Error(data.error || "Erro ao enviar");
+
+        document.getElementById("name").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("body").value = "";
+
+        msg.textContent = "✓ comentário publicado";
+        msg.className = "form-message success";
+        setTimeout(() => { msg.className = "form-message"; }, 4000);
+
+        fetchComments();
+      } catch (e) {
+        msg.textContent = e.message;
+        msg.className = "form-message error-msg";
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "publicar comentário";
+      }
+    });
+
+    // validação inline
+    ["name","email","body"].forEach(f => {
+      document.getElementById(f).addEventListener("blur", validate);
+    });
+
+    fetchComments();
+  </script>
+</body>
+</html>
