@@ -1,0 +1,39 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(uuid())
+  name         String
+  email        String   @unique
+  passwordHash String?
+  status       UserStatus @default(PENDING_ACTIVATION)
+
+  createdAt    DateTime @default(now())
+
+  activationTokens ActivationToken[]
+}
+
+model ActivationToken {
+  id         String   @id @default(uuid())
+  tokenHash  String
+  expiresAt  DateTime
+  used       Boolean  @default(false)
+
+  userId     String
+  user       User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt  DateTime @default(now())
+
+  @@index([tokenHash])
+}
+
+enum UserStatus {
+  PENDING_ACTIVATION
+  ACTIVE
+}
