@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Sistema de Comentários</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h2 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: #555;
+            font-weight: 500;
+        }
+        
+        input, textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #4CAF50;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        
+        button {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+        
+        button:hover {
+            background: #45a049;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .error {
+            color: #f44336;
+            font-size: 12px;
+            margin-top: 4px;
+            display: none;
+        }
+        
+        .success {
+            background: #d4edda;
+            color: #155724;
+            padding: 12px;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        
+        .comments-list {
+            margin-top: 40px;
+        }
+        
+        .comment {
+            background: #f9f9f9;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+            border-left: 3px solid #4CAF50;
+        }
+        
+        .comment-name {
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .comment-date {
+            font-size: 12px;
+            color: #777;
+            margin-bottom: 8px;
+        }
+        
+        .comment-content {
+            color: #555;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+        }
+        
+        @media (max-width: 600px) {
+            .container {
+                padding: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Deixe seu comentário</h2>
+        
+        <div id="successMessage" class="success"></div>
+        
+        <form id="commentForm">
+            <div class="form-group">
+                <label for="name">Nome *</label>
+                <input type="text" id="name" name="name" required maxlength="50" pattern="[A-Za-zÀ-ÿ\s]+">
+                <div class="error" id="nameError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="email">Email *</label>
+                <input type="email" id="email" name="email" required maxlength="100">
+                <div class="error" id="emailError"></div>
+            </div>
+            
+            <div class="form-group">
+                <label for="content">Comentário *</label>
+                <textarea id="content" name="content" required maxlength="1000"></textarea>
+                <div class="error" id="contentError"></div>
+                <small><span id="charCount">0</span>/1000 caracteres</small>
+            </div>
+            
+            <button type="submit" id="submitBtn">Enviar Comentário</button>
+        </form>
+    </div>
+    
+    <div class="container comments-list">
+        <h2>Comentários</h2>
+        <div id="commentsContainer">
+            <div class="loading">Carregando comentários...</div>
+        </div>
+    </div>
+    
+    <script>
+        // CSRF Token holder
+        let csrfToken = null;
+        
+        // Gerar CSRF token
+        async function getCSRFToken() {
+            try {
+                const response = await fetch('/api/csrf-token');
+                const data = await response.json();
+                csrfToken = data.token;
+            } catch (error) {
+                console.error('Erro ao obter CSRF token:', error);
+            }
+        }
+        
+        // Carregar comentários
+        async function loadComments() {
+            try {
+                const response = await fetch('/api/comments?page=1&limit=20');
+                const data = await response.json();
+                
+                const container = document.getElementById('commentsContainer');
+                
+                if (data.comments && data.comments.length > 0) {
+                    container.innerHTML = data.comments.map(comment => `
+                        <div class="comment">
+                            <div class="comment-name">${escapeHtml(comment.name)}</div>
+                            <div class="comment-date">${new Date(comment.created_at).toLocaleDateString('pt-BR')}</div>
+                            <div class="comment-content">${escapeHtml(comment.content)}</div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<div class="loading">Nenhum comentário aprovado ainda.</div>';
+                }
+            } catch (error) {
+                console.error('Erro ao carregar comentários:', error);
+                document.getElementById('commentsContainer').innerHTML = '<div class="loading">Erro ao carregar comentários.</div>';
+            }
+        }
+        
+        // Escapar HTML para prevenir XSS
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Validação do lado do cliente (cópia da validação do servidor)
+        function validateForm(name, email, content) {
+            let isValid = true;
+            
+            // Validar nome
+            const nameRegex = /^[a-zA-ZÀ-ÿ\s]+$/;
+            if (!name || name.length < 2 || name.length > 50 || !nameRegex.test(name)) {
+                document.getElementById('nameError').textContent = 'Nome deve ter entre 2-50 caracteres e conter apenas letras';
+                document.getElementById('nameError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('nameError').style.display = 'none';
+            }
+            
+            // Validar email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email) || email.length > 100) {
+                document.getElementById('emailError').textContent = 'Email inválido';
+                document.getElementById('emailError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('emailError').style.display = 'none';
+            }
+            
+            // Validar conteúdo
+            if (!content || content.length < 1 || content.length > 1000 || /[<>{}]/.test(content)) {
+                document.getElementById('contentError').textContent = 'Comentário deve ter entre 1-1000 caracteres e não pode conter HTML';
+                document.getElementById('contentError').style.display = 'block';
+                isValid = false;
+            } else {
+                document.getElementById('contentError').style.display = 'none';
+            }
+            
+            return isValid;
+        }
+        
+        // Contador de caracteres
+        document.getElementById('content').addEventListener('input', function(e) {
+            const count = e.target.value.length;
+            document.getElementById('charCount').textContent = count;
+            if (count > 1000) {
+                e.target.value = e.target.value.substring(0, 1000);
+                document.getElementById('charCount').textContent = 1000;
+            }
+        });
+        
+        // Submissão do formulário
+        document.getElementById('commentForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const content = document.getElementById('content').value.trim();
+            
+            // Validação cliente
+            if (!validateForm(name, email, content)) {
+                return;
+            }
+            
+            const submitBtn = document.getElementById('submitBtn');
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Enviando...';
+            
+            try {
+                const response = await fetch('/api/comments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-Token': csrfToken
+                    },
+                    body: JSON.stringify({ name, email, content, _csrf: csrfToken })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    // Sucesso
+                    document.getElementById('successMessage').textContent = data.message;
+                    document.getElementById('successMessage').style.display = 'block';
+                    document.getElementById('commentForm').reset();
+                    document.getElementById('charCount').textContent = '0';
+                    
+                    // Limpar mensagem após 5 segundos
+                    setTimeout(() => {
+                        document.getElementById('successMessage').style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Erro
+                    if (data.errors) {
+                        data.errors.forEach(err => {
+                            const errorElement = document.getElementById(`${err.field}Error`);
+                            if (errorElement) {
+                                errorElement.textContent = err.message;
+                                errorElement.style.display = 'block';
+                            }
+                        });
+                    } else {
+                        alert(data.error || 'Erro ao enviar comentário');
+                    }
+                }
+            } catch (error) {
+                console.error('Erro:', error);
+                alert('Erro de conexão. Tente novamente.');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Enviar Comentário';
+            }
+        });
+        
+        // Inicialização
+        async function init() {
+            await getCSRFToken();
+            await loadComments();
+        }
+        
+        init();
+    </script>
+</body>
+</html>
