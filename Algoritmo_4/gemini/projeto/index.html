@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <!-- index.html -->
+<div id="comment-section">
+  <h3>Deixe um comentário</h3>
+  <form id="comment-form">
+    <input type="text" id="username" placeholder="Seu nome" required style="display:block; margin-bottom:10px; padding:8px; width:100%;">
+    <textarea id="comment-text" placeholder="Escreva seu comentário..." required style="display:block; margin-bottom:10px; padding:8px; width:100%; height:100px;"></textarea>
+    <button type="submit" style="padding:10px 20px; cursor:pointer;">Publicar Comentário</button>
+  </form>
+
+  <div id="message" style="margin-top: 15px;"></div>
+</div>
+
+<script>
+  document.getElementById('comment-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+
+    const data = {
+      username: document.getElementById('username').value,
+      text: document.getElementById('comment-text').value
+    };
+
+    try {
+      const response = await fetch('http://localhost:3000/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        document.getElementById('message').innerText = "Comentário enviado com sucesso!";
+        document.getElementById('comment-form').reset();
+      } else {
+        document.getElementById('message').innerText = "Erro ao enviar comentário.";
+      }
+    } catch (err) {
+      console.error("Erro na requisição:", err);
+    }
+  });
+</script>
+</body>
+</html>
