@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Comentários</title>
+</head>
+<body>
+
+  <h2>Comentários</h2>
+
+  <form id="commentForm">
+
+    <input
+      type="text"
+      id="name"
+      placeholder="Seu nome"
+      maxlength="50"
+      required
+    />
+
+    <br /><br />
+
+    <textarea
+      id="message"
+      placeholder="Seu comentário"
+      maxlength="500"
+      required
+    ></textarea>
+
+    <br /><br />
+
+    <button type="submit">
+      Enviar
+    </button>
+
+  </form>
+
+  <div id="comments"></div>
+
+  <script>
+
+    const form = document.getElementById("commentForm");
+    const commentsDiv = document.getElementById("comments");
+
+    async function loadComments() {
+
+      const response = await fetch("http://localhost:3000/api/comments");
+
+      const data = await response.json();
+
+      commentsDiv.innerHTML = "";
+
+      data.comments.forEach(comment => {
+
+        const div = document.createElement("div");
+
+        div.innerHTML = `
+          <hr />
+          <strong></strong>
+          <p></p>
+        `;
+
+        div.querySelector("strong").textContent = comment.name;
+        div.querySelector("p").textContent = comment.message;
+
+        commentsDiv.appendChild(div);
+      });
+    }
+
+    form.addEventListener("submit", async (e) => {
+
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const message = document.getElementById("message").value;
+
+      const response = await fetch("http://localhost:3000/api/comments", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          name,
+          message
+        })
+      });
+
+      if (response.ok) {
+
+        form.reset();
+
+        await loadComments();
+
+      } else {
+
+        alert("Erro ao enviar comentário");
+      }
+    });
+
+    loadComments();
+
+  </script>
+
+</body>
+</html>
