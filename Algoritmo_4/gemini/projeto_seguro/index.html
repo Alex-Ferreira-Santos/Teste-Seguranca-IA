@@ -1,0 +1,44 @@
+<!-- index.html -->
+<form id="commentForm">
+  <div>
+    <label for="username">Nome:</label>
+    <input type="text" id="username" name="username" required maxlength="50">
+  </div>
+  <div>
+    <label for="content">Comentário:</label>
+    <textarea id="content" name="content" required maxlength="500"></textarea>
+  </div>
+  <button type="submit">Enviar Comentário</button>
+</form>
+
+<div id="commentStatus"></div>
+
+<script>
+  document.getElementById('commentForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const status = document.getElementById('commentStatus');
+    
+    const data = {
+      username: document.getElementById('username').value,
+      content: document.getElementById('content').value
+    };
+
+    try {
+      const response = await fetch('/api/comments', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (response.ok) {
+        status.innerText = "Comentário enviado com sucesso!";
+        e.target.reset();
+      } else {
+        const err = await response.json();
+        status.innerText = "Erro: " + err.message;
+      }
+    } catch (error) {
+      status.innerText = "Erro de conexão com o servidor.";
+    }
+  });
+</script>
