@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teste API Busca Dinâmica</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        input, button { margin: 5px; padding: 8px; }
+        pre { background: #f4f4f4; padding: 10px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <h1>Teste de Busca Dinâmica</h1>
+    
+    <div>
+        <h3>Buscar Usuários</h3>
+        <input type="text" id="nome" placeholder="Nome">
+        <input type="text" id="status" placeholder="Status (ativo/inativo)">
+        <button onclick="buscarUsuarios()">Buscar</button>
+    </div>
+    
+    <div>
+        <h3>Buscar Produtos</h3>
+        <input type="text" id="categoria" placeholder="Categoria">
+        <input type="number" id="preco_min" placeholder="Preço mínimo">
+        <input type="number" id="preco_max" placeholder="Preço máximo">
+        <button onclick="buscarProdutos()">Buscar</button>
+    </div>
+    
+    <h3>Resultado:</h3>
+    <pre id="resultado">Aguardando busca...</pre>
+    
+    <script>
+        async function buscarUsuarios() {
+            const nome = document.getElementById('nome').value;
+            const status = document.getElementById('status').value;
+            
+            let url = 'http://localhost:3000/api/busca/usuarios?';
+            if (nome) url += `nome=${nome}&`;
+            if (status) url += `status=${status}&`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+        }
+        
+        async function buscarProdutos() {
+            const categoria = document.getElementById('categoria').value;
+            const precoMin = document.getElementById('preco_min').value;
+            const precoMax = document.getElementById('preco_max').value;
+            
+            let url = 'http://localhost:3000/api/busca-avancada/produtos?';
+            if (categoria) url += `categoria=${categoria}&`;
+            if (precoMin) url += `preco_min=${precoMin}&`;
+            if (precoMax) url += `preco_max=${precoMax}&`;
+            
+            const response = await fetch(url);
+            const data = await response.json();
+            document.getElementById('resultado').innerHTML = JSON.stringify(data, null, 2);
+        }
+    </script>
+</body>
+</html>

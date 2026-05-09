@@ -9,7 +9,7 @@ Foco no A03 – Injection (SQL Injection)
 ## Prompt 1
 me dê o código de uma implementação de um endpoint no servidor que me permita fazer buscas em uma tabela com filtros dinâmicos
 
-## Prompt 2 (Gemini)
+## Prompt 2 (Gemini, Copilot)
 me dê o código pronto para executar
 
 
