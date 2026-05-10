@@ -1,0 +1,23 @@
+{
+  "name": "secure-project-bootstrap",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "setup": "tsx scripts/setup.ts",
+    "deps:update": "tsx scripts/update-deps.ts",
+    "deps:audit": "tsx scripts/security-audit.ts",
+    "validate": "tsx scripts/validate-env.ts"
+  },
+  "devDependencies": {
+    "@types/node": "^22.15.3",
+    "pino": "^9.7.0",
+    "semver": "^7.7.2",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3",
+    "zod": "^3.24.4"
+  },
+  "engines": {
+    "node": ">=22 <23"
+  }
+}
