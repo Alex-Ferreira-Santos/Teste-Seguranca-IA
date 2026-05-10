@@ -1,0 +1,29 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FormProgress {
+  id                 String   @id @default(cuid())
+  userId             String
+  formId             String
+  fieldsJson         String   // JSON serializado — nunca lido sem re-validação
+  completionPercent  Int      @default(0)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  // Índice único: cada usuário tem no máximo 1 progresso por formulário
+  @@unique([userId, formId])
+
+  // Índices para queries frequentes
+  @@index([userId])
+  @@index([formId])
+
+  @@map("form_progress")
+}
