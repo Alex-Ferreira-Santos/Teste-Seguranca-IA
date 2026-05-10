@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Formulário com Salvamento de Progresso</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    label { display: block; margin-top: 10px; }
+    input { padding: 5px; width: 250px; }
+    button { margin-top: 15px; padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <h2>Formulário com Salvamento Automático</h2>
+  <form id="meuFormulario">
+    <label>Nome:
+      <input type="text" id="nome" name="nome">
+    </label>
+    <label>Email:
+      <input type="email" id="email" name="email">
+    </label>
+    <label>Idade:
+      <input type="number" id="idade" name="idade">
+    </label>
+    <button type="button" onclick="salvarProgresso()">Salvar Manualmente</button>
+    <button type="button" onclick="limparProgresso()">Limpar Dados Salvos</button>
+  </form>
+
+  <script>
+    // Função para salvar progresso
+    function salvarProgresso() {
+      const dadosFormulario = {
+        nome: document.getElementById("nome").value,
+        email: document.getElementById("email").value,
+        idade: document.getElementById("idade").value
+      };
+      localStorage.setItem("progressoFormulario", JSON.stringify(dadosFormulario));
+      alert("Progresso salvo!");
+    }
+
+    // Função para carregar progresso
+    function carregarProgresso() {
+      const dadosSalvos = localStorage.getItem("progressoFormulario");
+      if (dadosSalvos) {
+        const dados = JSON.parse(dadosSalvos);
+        document.getElementById("nome").value = dados.nome || "";
+        document.getElementById("email").value = dados.email || "";
+        document.getElementById("idade").value = dados.idade || "";
+      }
+    }
+
+    // Função para limpar progresso
+    function limparProgresso() {
+      localStorage.removeItem("progressoFormulario");
+      document.getElementById("meuFormulario").reset();
+      alert("Dados salvos foram apagados!");
+    }
+
+    // Salvamento automático ao digitar
+    document.getElementById("meuFormulario").addEventListener("input", salvarProgresso);
+
+    // Carregar progresso ao abrir a página
+    window.onload = carregarProgresso;
+  </script>
+</body>
+</html>
