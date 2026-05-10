@@ -1,0 +1,107 @@
+
+<h2 class="sr-only">Configuração de webhook: insira uma URL para receber notificações de eventos do sistema</h2>
+
+<div style="padding: 1.5rem 0;">
+
+  <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+    <i class="ti ti-webhook" style="font-size: 20px; color: var(--color-text-secondary);" aria-hidden="true"></i>
+    <span style="font-size: 16px; font-weight: 500; color: var(--color-text-primary);">Webhook</span>
+    <span style="font-size: 12px; padding: 2px 8px; background: var(--color-background-success); color: var(--color-text-success); border-radius: var(--border-radius-md);">ativo</span>
+  </div>
+  <p style="font-size: 13px; color: var(--color-text-secondary); margin: 0 0 1.5rem;">Informe uma URL para ser chamada quando uma ação for concluída no sistema.</p>
+
+  <div style="display: flex; gap: 8px; margin-bottom: 1rem;">
+    <select id="method" style="width: 96px; font-size: 13px; font-weight: 500;">
+      <option>POST</option>
+      <option>GET</option>
+      <option>PUT</option>
+    </select>
+    <input id="url-input" type="url" placeholder="https://seu-servidor.com/webhook" style="flex: 1; font-size: 14px; font-family: var(--font-mono);" />
+  </div>
+
+  <div style="background: var(--color-background-secondary); border-radius: var(--border-radius-md); padding: 12px 14px; margin-bottom: 1rem;">
+    <p style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 10px; text-transform: uppercase; letter-spacing: 0.05em;">Evento</p>
+    <div id="events" style="display: flex; flex-direction: column; gap: 8px;">
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px;">
+        <input type="radio" name="event" value="order.completed" checked />
+        <span style="color: var(--color-text-primary);">Pedido concluído</span>
+        <code style="font-size: 11px; color: var(--color-text-secondary); margin-left: auto;">order.completed</code>
+      </label>
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px;">
+        <input type="radio" name="event" value="payment.approved" />
+        <span style="color: var(--color-text-primary);">Pagamento aprovado</span>
+        <code style="font-size: 11px; color: var(--color-text-secondary); margin-left: auto;">payment.approved</code>
+      </label>
+      <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-size: 14px;">
+        <input type="radio" name="event" value="user.created" />
+        <span style="color: var(--color-text-primary);">Novo usuário</span>
+        <code style="font-size: 11px; color: var(--color-text-secondary); margin-left: auto;">user.created</code>
+      </label>
+    </div>
+  </div>
+
+  <details style="margin-bottom: 1rem; border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-md); padding: 10px 14px;">
+    <summary style="font-size: 13px; font-weight: 500; cursor: pointer; color: var(--color-text-primary); list-style: none; display: flex; align-items: center; gap: 6px;">
+      <i class="ti ti-lock" style="font-size:15px;" aria-hidden="true"></i> Autenticação (opcional)
+    </summary>
+    <div style="margin-top: 12px; display: flex; flex-direction: column; gap: 8px;">
+      <input type="text" placeholder="Header: ex. Authorization" style="font-size: 13px; font-family: var(--font-mono);" />
+      <input type="password" placeholder="Valor: ex. Bearer sk-..." style="font-size: 13px; font-family: var(--font-mono);" />
+    </div>
+  </details>
+
+  <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+    <button id="save-btn" onclick="handleSave()" style="display: flex; align-items: center; gap: 6px; font-size: 14px;">
+      <i class="ti ti-check" style="font-size:16px;" aria-hidden="true"></i> Salvar webhook
+    </button>
+    <button id="test-btn" onclick="handleTest()" style="display: flex; align-items: center; gap: 6px; font-size: 14px;">
+      <i class="ti ti-send" style="font-size:16px;" aria-hidden="true"></i> Testar agora
+    </button>
+    <span id="status-msg" style="font-size: 13px; display: none;"></span>
+  </div>
+
+  <div id="payload-preview" style="display: none; margin-top: 1.25rem;">
+    <p style="font-size: 12px; font-weight: 500; color: var(--color-text-secondary); margin: 0 0 6px; text-transform: uppercase; letter-spacing: 0.05em;">Payload enviado</p>
+    <pre id="payload-code" style="margin: 0; font-size: 12px; font-family: var(--font-mono); background: var(--color-background-secondary); padding: 12px 14px; border-radius: var(--border-radius-md); overflow-x: auto; color: var(--color-text-primary); line-height: 1.6;"></pre>
+  </div>
+</div>
+
+<script>
+function getEvent() {
+  return document.querySelector('input[name="event"]:checked')?.value || 'order.completed';
+}
+
+function getPayload(event) {
+  const payloads = {
+    'order.completed': { event: 'order.completed', order_id: 'ord_8f2k1', total: 149.90, currency: 'BRL', customer: { id: 'cus_3xz9', email: 'cliente@email.com' }, timestamp: new Date().toISOString() },
+    'payment.approved': { event: 'payment.approved', payment_id: 'pay_7b3m2', amount: 149.90, method: 'credit_card', status: 'approved', timestamp: new Date().toISOString() },
+    'user.created': { event: 'user.created', user_id: 'usr_4kp8', name: 'Ana Silva', email: 'ana@email.com', plan: 'free', timestamp: new Date().toISOString() }
+  };
+  return payloads[event] || payloads['order.completed'];
+}
+
+function showStatus(msg, type) {
+  const el = document.getElementById('status-msg');
+  el.textContent = msg;
+  el.style.display = 'inline';
+  el.style.color = type === 'success' ? 'var(--color-text-success)' : type === 'error' ? 'var(--color-text-danger)' : 'var(--color-text-secondary)';
+  setTimeout(() => { el.style.display = 'none'; }, 4000);
+}
+
+function handleSave() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) { showStatus('Informe uma URL válida.', 'error'); return; }
+  try { new URL(url); } catch { showStatus('URL inválida.', 'error'); return; }
+  showStatus('Webhook salvo com sucesso!', 'success');
+}
+
+function handleTest() {
+  const url = document.getElementById('url-input').value.trim();
+  if (!url) { showStatus('Informe uma URL antes de testar.', 'error'); return; }
+  const event = getEvent();
+  const payload = getPayload(event);
+  document.getElementById('payload-code').textContent = JSON.stringify(payload, null, 2);
+  document.getElementById('payload-preview').style.display = 'block';
+  showStatus('Payload exibido abaixo ↓', 'info');
+}
+</script>

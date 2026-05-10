@@ -1,0 +1,33 @@
+// Adicione estes models ao seu schema.prisma existente
+
+model Webhook {
+  id        String   @id @default(cuid())
+  tenantId  String
+  url       String
+  event     String
+  method    String   @default("POST")
+  secret    String?  // usado para assinar o payload via HMAC-SHA256
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  deliveries WebhookDelivery[]
+
+  @@unique([tenantId, event]) // um webhook por evento por tenant
+  @@index([event])            // acelera busca no disparo
+}
+
+model WebhookDelivery {
+  id          String   @id @default(cuid())
+  webhookId   String
+  webhook     Webhook  @relation(fields: [webhookId], references: [id], onDelete: Cascade)
+
+  event       String
+  url         String
+  statusCode  Int?
+  attempt     Int
+  success     Boolean
+  deliveredAt DateTime @default(now())
+
+  @@index([webhookId])
+}
