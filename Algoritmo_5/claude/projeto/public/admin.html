@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel Admin — Usuários</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:ital,wght@0,300;0,400;0,500;1,300&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0d0d0d;
+      --surface: #161616;
+      --border: #2a2a2a;
+      --border-subtle: #1e1e1e;
+      --text: #e8e4dc;
+      --text-muted: #666;
+      --text-dim: #444;
+      --accent: #c8b87a;
+      --accent-dim: rgba(200, 184, 122, 0.1);
+      --red: #c0614a;
+      --red-dim: rgba(192, 97, 74, 0.1);
+      --green: #6a9e72;
+      --green-dim: rgba(106, 158, 114, 0.1);
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-weight: 300;
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ── Layout ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 20px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: rgba(13,13,13,0.95);
+      backdrop-filter: blur(8px);
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: var(--accent);
+    }
+
+    .header-meta {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-muted);
+      letter-spacing: 1px;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 48px;
+    }
+
+    /* ── Page title ── */
+    .page-header {
+      margin-bottom: 48px;
+    }
+
+    .page-header h1 {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+    }
+
+    .page-header p {
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    /* ── Form ── */
+    .form-card {
+      border: 1px solid var(--border);
+      padding: 32px;
+      margin-bottom: 48px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .form-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, var(--accent), transparent);
+    }
+
+    .form-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 24px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    input[type="text"],
+    input[type="email"] {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 12px 16px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      outline: none;
+      transition: border-color 0.2s;
+      width: 100%;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    input::placeholder {
+      color: var(--text-dim);
+    }
+
+    .btn {
+      padding: 12px 28px;
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #0d0d0d;
+    }
+
+    .btn-primary:hover {
+      background: #d4c68a;
+    }
+
+    .btn-primary:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      font-size: 10px;
+      padding: 8px 14px;
+    }
+
+    .btn-ghost:hover {
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    .btn-danger {
+      background: transparent;
+      color: var(--red);
+      border: 1px solid transparent;
+      font-size: 10px;
+      padding: 8px 14px;
+    }
+
+    .btn-danger:hover {
+      border-color: var(--red);
+    }
+
+    /* ── Toast ── */
+    .toast {
+      position: fixed;
+      bottom: 32px;
+      right: 32px;
+      padding: 14px 24px;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.5px;
+      max-width: 400px;
+      z-index: 999;
+      opacity: 0;
+      transform: translateY(8px);
+      transition: all 0.3s;
+      pointer-events: none;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .toast.success { background: var(--green); color: #0d0d0d; }
+    .toast.error   { background: var(--red); color: #fff; }
+
+    /* ── Table ── */
+    .section-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 20px;
+    }
+
+    .section-title {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-muted);
+    }
+
+    .user-count {
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      color: var(--text-dim);
+    }
+
+    .table-wrap {
+      border: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead th {
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--text-dim);
+      padding: 14px 20px;
+      text-align: left;
+      border-bottom: 1px solid var(--border);
+      background: var(--surface);
+    }
+
+    tbody tr {
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.15s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+
+    td {
+      padding: 16px 20px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    .td-name { font-weight: 400; }
+    .td-email { color: var(--text-muted); font-size: 13px; font-family: 'DM Mono', monospace; }
+    .td-date { color: var(--text-dim); font-size: 12px; font-family: 'DM Mono', monospace; }
+
+    .badge {
+      display: inline-block;
+      padding: 3px 10px;
+      font-family: 'DM Mono', monospace;
+      font-size: 10px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+
+    .badge-active   { background: var(--green-dim); color: var(--green); }
+    .badge-pending  { background: var(--accent-dim); color: var(--accent); }
+    .badge-expired  { background: var(--red-dim); color: var(--red); }
+
+    .td-actions {
+      display: flex;
+      gap: 4px;
+      justify-content: flex-end;
+    }
+
+    /* ── Empty state ── */
+    .empty {
+      padding: 64px 20px;
+      text-align: center;
+      color: var(--text-dim);
+    }
+
+    .empty-icon {
+      font-size: 32px;
+      margin-bottom: 16px;
+      opacity: 0.3;
+    }
+
+    .empty p {
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 1px;
+    }
+
+    /* ── Loading ── */
+    .loading {
+      padding: 48px;
+      text-align: center;
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      color: var(--text-dim);
+      letter-spacing: 2px;
+    }
+
+    @media (max-width: 768px) {
+      main { padding: 24px 20px; }
+      header { padding: 16px 20px; }
+      .form-row { grid-template-columns: 1fr; }
+      .td-date, .td-email { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <span class="logo">Admin</span>
+  <span class="header-meta">Sistema de Convites</span>
+</header>
+
+<main>
+  <div class="page-header">
+    <h1>Usuários</h1>
+    <p>Cadastre novos usuários — eles receberão um link por e-mail para definir a própria senha.</p>
+  </div>
+
+  <!-- Form -->
+  <div class="form-card">
+    <p class="form-title">→ Novo usuário</p>
+    <div class="form-row">
+      <div class="field">
+        <label for="name">Nome completo</label>
+        <input type="text" id="name" placeholder="Ex: Maria Silva" autocomplete="off">
+      </div>
+      <div class="field">
+        <label for="email">E-mail</label>
+        <input type="email" id="email" placeholder="Ex: maria@empresa.com" autocomplete="off">
+      </div>
+      <button class="btn btn-primary" id="btnCadastrar" onclick="cadastrarUsuario()">
+        Enviar convite
+      </button>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="section-header">
+    <span class="section-title">Cadastrados</span>
+    <span class="user-count" id="userCount">—</span>
+  </div>
+
+  <div class="table-wrap">
+    <div class="loading" id="loading">carregando...</div>
+    <table id="tabela" style="display:none">
+      <thead>
+        <tr>
+          <th>Nome</th>
+          <th>E-mail</th>
+          <th>Status</th>
+          <th>Cadastrado em</th>
+          <th style="text-align:right">Ações</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <div class="empty" id="empty" style="display:none">
+      <div class="empty-icon">○</div>
+      <p>Nenhum usuário cadastrado ainda.</p>
+    </div>
+  </div>
+</main>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function showToast(msg, type = 'success') {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.className = `toast ${type} show`;
+    setTimeout(() => t.classList.remove('show'), 4000);
+  }
+
+  function formatDate(str) {
+    if (!str) return '—';
+    return new Date(str).toLocaleDateString('pt-BR', { day: '2-digit', month: '2-digit', year: 'numeric' });
+  }
+
+  function getBadge(user) {
+    if (user.is_active) return '<span class="badge badge-active">Ativo</span>';
+    if (!user.invite_token) return '<span class="badge badge-expired">Sem convite</span>';
+    if (new Date(user.invite_expires_at) < new Date()) return '<span class="badge badge-expired">Expirado</span>';
+    return '<span class="badge badge-pending">Pendente</span>';
+  }
+
+  async function carregarUsuarios() {
+    const res = await fetch('/api/users');
+    const users = await res.json();
+
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('userCount').textContent = `${users.length} usuário${users.length !== 1 ? 's' : ''}`;
+
+    if (users.length === 0) {
+      document.getElementById('empty').style.display = 'block';
+      return;
+    }
+
+    document.getElementById('tabela').style.display = 'table';
+    const tbody = document.getElementById('tbody');
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td class="td-name">${u.name}</td>
+        <td class="td-email">${u.email}</td>
+        <td>${getBadge(u)}</td>
+        <td class="td-date">${formatDate(u.created_at)}</td>
+        <td>
+          <div class="td-actions">
+            ${!u.is_active ? `<button class="btn btn-ghost" onclick="reenviar(${u.id})">Reenviar</button>` : ''}
+            <button class="btn btn-danger" onclick="remover(${u.id}, '${u.name}')">Remover</button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  async function cadastrarUsuario() {
+    const name = document.getElementById('name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const btn = document.getElementById('btnCadastrar');
+
+    if (!name || !email) return showToast('Preencha nome e e-mail.', 'error');
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+      const res = await fetch('/api/users', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email })
+      });
+
+      const data = await res.json();
+
+      if (!res.ok) return showToast(data.error, 'error');
+
+      showToast(data.message);
+      document.getElementById('name').value = '';
+      document.getElementById('email').value = '';
+      document.getElementById('empty').style.display = 'none';
+      document.getElementById('tabela').style.display = 'table';
+      document.getElementById('loading').style.display = 'none';
+      await carregarUsuarios();
+    } catch (err) {
+      showToast('Erro de conexão.', 'error');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Enviar convite';
+    }
+  }
+
+  async function reenviar(id) {
+    const res = await fetch(`/api/users/${id}/reenviar`, { method: 'POST' });
+    const data = await res.json();
+    showToast(res.ok ? data.message : data.error, res.ok ? 'success' : 'error');
+  }
+
+  async function remover(id, name) {
+    if (!confirm(`Remover "${name}"? Esta ação não pode ser desfeita.`)) return;
+    const res = await fetch(`/api/users/${id}`, { method: 'DELETE' });
+    const data = await res.json();
+    showToast(data.message);
+    await carregarUsuarios();
+  }
+
+  // Enter para cadastrar
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter') cadastrarUsuario();
+  });
+
+  carregarUsuarios();
+</script>
+</body>
+</html>
