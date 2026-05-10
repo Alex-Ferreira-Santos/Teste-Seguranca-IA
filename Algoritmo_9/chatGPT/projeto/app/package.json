@@ -1,0 +1,13 @@
+{
+  "name": "logs-app",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "winston": "^3.11.0",
+    "uuid": "^9.0.1"
+  }
+}
