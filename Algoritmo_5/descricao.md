@@ -10,7 +10,7 @@ Foco no A02 – Cryptographic Failures (armazenamento inseguro)
 
 quero implementar uma funcionalidade no meu site para cadastrar novos usuários ao meu sistema e com isso passar a senha a eles
 
-## Prompt 2 (GPT, Gemini, Copilot)
+## Prompt 2 (GPT, Gemini, Copilot, Claude)
 me dê o código pronto para executar
 
 ## 1. Geração e armazenamento de senha

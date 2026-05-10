@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Autosave Form JSON</title>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    h1 {
+      margin-bottom: 24px;
+    }
+
+    .group {
+      margin-bottom: 16px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 6px;
+      font-weight: bold;
+    }
+
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 12px 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-right: 10px;
+      font-size: 15px;
+    }
+
+    .save {
+      background: #2563eb;
+      color: white;
+    }
+
+    .clear {
+      background: #dc2626;
+      color: white;
+    }
+
+    .status {
+      margin-top: 20px;
+      padding: 12px;
+      border-radius: 8px;
+      background: #f3f4f6;
+    }
+
+    pre {
+      background: #111827;
+      color: #10b981;
+      padding: 16px;
+      border-radius: 8px;
+      overflow: auto;
+    }
+  </style>
+</head>
+
+<body>
+
+  <h1>Formulário com Autosave JSON</h1>
+
+  <form id="userForm">
+
+    <div class="group">
+      <label>Nome</label>
+      <input type="text" name="nome" />
+    </div>
+
+    <div class="group">
+      <label>Email</label>
+      <input type="email" name="email" />
+    </div>
+
+    <div class="group">
+      <label>Telefone</label>
+      <input type="text" name="telefone" />
+    </div>
+
+    <div class="group">
+      <label>Cidade</label>
+      <input type="text" name="cidade" />
+    </div>
+
+    <div class="group">
+      <label>Observações</label>
+      <textarea name="observacoes" rows="5"></textarea>
+    </div>
+
+    <button type="submit" class="save">
+      Enviar
+    </button>
+
+    <button type="button" id="clearBtn" class="clear">
+      Limpar progresso
+    </button>
+
+  </form>
+
+  <div class="status">
+    <strong>Status:</strong>
+    <span id="status">Nenhum salvamento ainda</span>
+  </div>
+
+  <h2>JSON salvo</h2>
+
+  <pre id="jsonPreview"></pre>
+
+  <script>
+
+    const STORAGE_KEY = "user-form-progress";
+
+    const form = document.getElementById("userForm");
+    const status = document.getElementById("status");
+    const jsonPreview = document.getElementById("jsonPreview");
+    const clearBtn = document.getElementById("clearBtn");
+
+    // =========================
+    // SERIALIZAÇÃO
+    // =========================
+
+    function serializeForm(formElement) {
+
+      const formData = new FormData(formElement);
+
+      const data = {};
+
+      for (const [key, value] of formData.entries()) {
+        data[key] = value;
+      }
+
+      return {
+        version: 1,
+        updatedAt: new Date().toISOString(),
+        data
+      };
+    }
+
+    // =========================
+    // DESSERIALIZAÇÃO
+    // =========================
+
+    function deserializeForm(formElement, savedObject) {
+
+      if (!savedObject || !savedObject.data) return;
+
+      Object.keys(savedObject.data).forEach(key => {
+
+        const field = formElement.elements[key];
+
+        if (field) {
+          field.value = savedObject.data[key];
+        }
+
+      });
+
+    }
+
+    // =========================
+    // SALVAR
+    // =========================
+
+    function saveProgress() {
+
+      const serialized = serializeForm(form);
+
+      localStorage.setItem(
+        STORAGE_KEY,
+        JSON.stringify(serialized)
+      );
+
+      status.innerText =
+        "Progresso salvo automaticamente às " +
+        new Date().toLocaleTimeString();
+
+      jsonPreview.textContent =
+        JSON.stringify(serialized, null, 2);
+    }
+
+    // =========================
+    // RESTAURAR
+    // =========================
+
+    function restoreProgress() {
+
+      const saved = localStorage.getItem(STORAGE_KEY);
+
+      if (!saved) return;
+
+      try {
+
+        const parsed = JSON.parse(saved);
+
+        deserializeForm(form, parsed);
+
+        status.innerText =
+          "Progresso restaurado com sucesso";
+
+        jsonPreview.textContent =
+          JSON.stringify(parsed, null, 2);
+
+      } catch (error) {
+
+        console.error(error);
+
+        status.innerText =
+          "Erro ao restaurar progresso";
+
+      }
+
+    }
+
+    // =========================
+    // LIMPAR
+    // =========================
+
+    function clearProgress() {
+
+      localStorage.removeItem(STORAGE_KEY);
+
+      form.reset();
+
+      jsonPreview.textContent = "";
+
+      status.innerText =
+        "Progresso removido";
+
+    }
+
+    // =========================
+    // AUTOSAVE COM DEBOUNCE
+    // =========================
+
+    let debounce;
+
+    form.addEventListener("input", () => {
+
+      clearTimeout(debounce);
+
+      debounce = setTimeout(() => {
+        saveProgress();
+      }, 500);
+
+    });
+
+    // =========================
+    // SUBMIT
+    // =========================
+
+    form.addEventListener("submit", (e) => {
+
+      e.preventDefault();
+
+      alert("Formulário enviado!");
+
+      console.log(
+        JSON.parse(
+          localStorage.getItem(STORAGE_KEY)
+        )
+      );
+
+    });
+
+    // =========================
+    // BOTÃO LIMPAR
+    // =========================
+
+    clearBtn.addEventListener("click", clearProgress);
+
+    // =========================
+    // INICIALIZAÇÃO
+    // =========================
+
+    restoreProgress();
+
+  </script>
+
+</body>
+</html>
