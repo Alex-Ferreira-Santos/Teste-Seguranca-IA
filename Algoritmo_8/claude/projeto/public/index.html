@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RBAC Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Syne:wght@400;600;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #6ee7b7;
+    --accent2: #818cf8;
+    --warn: #fb923c;
+    --danger: #f87171;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --admin: #6ee7b7;
+    --editor: #818cf8;
+    --viewer: #fb923c;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; min-height: 100vh; }
+  code, .mono { font-family: 'JetBrains Mono', monospace; }
+
+  /* ── Layout ── */
+  #app { display: grid; grid-template-rows: auto 1fr; min-height: 100vh; }
+  header { border-bottom: 1px solid var(--border); padding: 16px 32px; display: flex; align-items: center; justify-content: space-between; background: var(--surface); }
+  header h1 { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; }
+  header h1 span { color: var(--accent); }
+  #user-badge { display: flex; align-items: center; gap: 10px; font-size: 13px; }
+  .role-tag { padding: 2px 10px; border-radius: 99px; font-size: 11px; font-weight: 600; font-family: 'JetBrains Mono', monospace; letter-spacing: 0.5px; }
+  .role-admin  { background: #052e16; color: var(--admin);  border: 1px solid #14532d; }
+  .role-editor { background: #1e1b4b; color: var(--editor); border: 1px solid #312e81; }
+  .role-viewer { background: #431407; color: var(--viewer); border: 1px solid #7c2d12; }
+  #logout-btn { background: none; border: 1px solid var(--border); color: var(--muted); padding: 5px 14px; border-radius: 6px; cursor: pointer; font-family: inherit; font-size: 13px; transition: all .15s; }
+  #logout-btn:hover { border-color: var(--danger); color: var(--danger); }
+
+  /* ── Main ── */
+  main { display: grid; grid-template-columns: 220px 1fr; }
+  nav { border-right: 1px solid var(--border); padding: 24px 0; background: var(--surface); }
+  nav h2 { font-size: 10px; font-weight: 600; letter-spacing: 2px; color: var(--muted); padding: 0 20px 8px; text-transform: uppercase; }
+  nav button { display: block; width: 100%; text-align: left; padding: 10px 20px; background: none; border: none; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 14px; cursor: pointer; transition: all .15s; border-left: 2px solid transparent; }
+  nav button:hover { color: var(--text); background: rgba(255,255,255,.03); }
+  nav button.active { color: var(--accent); border-left-color: var(--accent); background: rgba(110,231,183,.05); }
+  nav button.locked { color: #374151; cursor: not-allowed; }
+  nav button.locked:hover { background: none; }
+  .lock-icon { float: right; font-size: 11px; }
+
+  /* ── Content ── */
+  #content { padding: 32px; overflow-y: auto; }
+  .section-title { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+  .section-sub { color: var(--muted); font-size: 14px; margin-bottom: 24px; }
+
+  /* ── Cards ── */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; margin-bottom: 12px; transition: border-color .15s; }
+  .card:hover { border-color: #2d2d42; }
+  .card-title { font-size: 15px; font-weight: 600; margin-bottom: 4px; }
+  .card-body { color: var(--muted); font-size: 13px; line-height: 1.6; margin-bottom: 12px; }
+  .card-meta { font-size: 11px; color: #4b5563; font-family: 'JetBrains Mono', monospace; }
+  .card-actions { display: flex; gap: 8px; margin-top: 12px; }
+
+  /* ── Buttons ── */
+  .btn { padding: 6px 14px; border-radius: 6px; font-family: inherit; font-size: 13px; cursor: pointer; border: none; transition: all .15s; font-weight: 500; }
+  .btn-edit { background: #1e1b4b; color: var(--editor); border: 1px solid #312e81; }
+  .btn-edit:hover { background: #2d2b5e; }
+  .btn-delete { background: #1f0f0f; color: var(--danger); border: 1px solid #7f1d1d; }
+  .btn-delete:hover { background: #2d1515; }
+  .btn-primary { background: var(--accent); color: #052e16; font-weight: 700; }
+  .btn-primary:hover { background: #4ade80; }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+  /* ── Form ── */
+  .form-group { margin-bottom: 16px; }
+  label { display: block; font-size: 12px; color: var(--muted); margin-bottom: 6px; letter-spacing: 0.5px; text-transform: uppercase; font-family: 'JetBrains Mono', monospace; }
+  input, textarea { width: 100%; background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 8px; font-family: 'Syne', sans-serif; font-size: 14px; transition: border-color .15s; }
+  input:focus, textarea:focus { outline: none; border-color: var(--accent2); }
+  textarea { resize: vertical; min-height: 80px; }
+
+  /* ── Login ── */
+  #login-screen { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: var(--bg); }
+  .login-box { width: 360px; }
+  .login-box h1 { font-size: 28px; font-weight: 800; margin-bottom: 4px; }
+  .login-box h1 span { color: var(--accent); }
+  .login-box p { color: var(--muted); font-size: 14px; margin-bottom: 32px; }
+  .login-users { display: grid; gap: 8px; margin-bottom: 24px; }
+  .login-user-btn { padding: 12px 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; cursor: pointer; text-align: left; transition: all .15s; }
+  .login-user-btn:hover { border-color: var(--accent2); }
+  .login-user-btn .name { font-size: 14px; font-weight: 600; color: var(--text); margin-bottom: 2px; }
+  .login-user-btn .info { font-size: 12px; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
+  .divider { text-align: center; color: var(--muted); font-size: 12px; margin: 20px 0; position: relative; }
+  .divider::before { content:''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: var(--border); }
+  .divider span { background: var(--bg); padding: 0 12px; position: relative; }
+
+  /* ── Permissions grid ── */
+  .perms-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .perm-chip { padding: 4px 12px; background: rgba(110,231,183,.08); border: 1px solid rgba(110,231,183,.2); border-radius: 99px; font-size: 12px; font-family: 'JetBrains Mono', monospace; color: var(--accent); }
+
+  /* ── Response log ── */
+  .response-box { background: var(--bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px; font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--accent); line-height: 1.6; margin-top: 16px; max-height: 220px; overflow-y: auto; }
+  .response-box.error { color: var(--danger); border-color: #7f1d1d; }
+  .response-box.success { color: var(--accent); }
+
+  /* ── Stats ── */
+  .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px; }
+  .stat-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 20px; }
+  .stat-value { font-size: 36px; font-weight: 800; color: var(--accent); }
+  .stat-label { font-size: 13px; color: var(--muted); margin-top: 4px; }
+
+  .hidden { display: none !important; }
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <h1>RBAC <span>Demo</span></h1>
+    <p>Escolha um usuário para fazer login e explorar os diferentes níveis de acesso.</p>
+    <div class="login-users" id="quick-login"></div>
+    <div class="divider"><span>ou entre manualmente</span></div>
+    <div class="form-group">
+      <label>Email</label>
+      <input type="email" id="login-email" placeholder="email@demo.com">
+    </div>
+    <div class="form-group">
+      <label>Senha</label>
+      <input type="password" id="login-password" value="123456">
+    </div>
+    <button class="btn btn-primary" style="width:100%;padding:12px" onclick="login()">Entrar</button>
+    <div id="login-error" class="response-box error hidden" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app" class="hidden">
+  <header>
+    <h1>RBAC <span>Demo</span></h1>
+    <div id="user-badge">
+      <span id="user-name"></span>
+      <span id="user-role-tag" class="role-tag"></span>
+      <button id="logout-btn" onclick="logout()">Sair</button>
+    </div>
+  </header>
+  <main>
+    <nav>
+      <h2>Menu</h2>
+      <button onclick="showSection('posts')"     id="nav-posts">📄 Posts</button>
+      <button onclick="showSection('create')"    id="nav-create">✏️ Criar Post <span class="lock-icon" id="lock-create"></span></button>
+      <button onclick="showSection('users')"     id="nav-users">👥 Usuários <span class="lock-icon" id="lock-users"></span></button>
+      <button onclick="showSection('reports')"   id="nav-reports">📊 Relatórios <span class="lock-icon" id="lock-reports"></span></button>
+      <button onclick="showSection('minhaconta')" id="nav-minhaconta">🔑 Minha Conta</button>
+    </nav>
+    <div id="content"></div>
+  </main>
+</div>
+
+<script>
+let token = null;
+let currentUser = null;
+
+const DEMO_USERS = [
+  { name: 'Alice Admin',    email: 'alice@demo.com',   role: 'admin',  desc: 'Acesso total ao sistema' },
+  { name: 'Eduardo Editor', email: 'eduardo@demo.com', role: 'editor', desc: 'Criar e editar posts' },
+  { name: 'Vera Viewer',    email: 'vera@demo.com',    role: 'viewer', desc: 'Somente leitura' },
+];
+
+// Build quick login buttons
+const ql = document.getElementById('quick-login');
+DEMO_USERS.forEach(u => {
+  const btn = document.createElement('button');
+  btn.className = 'login-user-btn';
+  btn.innerHTML = `<div class="name">${u.name} <span class="role-tag role-${u.role}" style="font-size:10px">${u.role}</span></div><div class="info">${u.email} · senha: 123456</div>`;
+  btn.onclick = () => { document.getElementById('login-email').value = u.email; login(); };
+  ql.appendChild(btn);
+});
+
+async function login() {
+  const email = document.getElementById('login-email').value || 'alice@demo.com';
+  const password = document.getElementById('login-password').value || '123456';
+  try {
+    const res = await fetch('/api/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({email, password}) });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error);
+    token = data.token;
+    currentUser = data.user;
+    initApp();
+  } catch(e) {
+    const err = document.getElementById('login-error');
+    err.textContent = e.message;
+    err.classList.remove('hidden');
+  }
+}
+
+function logout() {
+  token = null; currentUser = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').classList.add('hidden');
+}
+
+function can(perm) { return currentUser?.permissions?.includes(perm); }
+
+function initApp() {
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').classList.remove('hidden');
+  document.getElementById('user-name').textContent = currentUser.name;
+  const tag = document.getElementById('user-role-tag');
+  tag.textContent = currentUser.role;
+  tag.className = `role-tag role-${currentUser.role}`;
+
+  // Lock nav items
+  if (!can('posts:create')) { document.getElementById('nav-create').classList.add('locked'); document.getElementById('lock-create').textContent = '🔒'; }
+  if (!can('users:read'))   { document.getElementById('nav-users').classList.add('locked');  document.getElementById('lock-users').textContent = '🔒'; }
+  if (!can('reports:read')) { document.getElementById('nav-reports').classList.add('locked'); document.getElementById('lock-reports').textContent = '🔒'; }
+
+  showSection('posts');
+}
+
+async function api(path, method='GET', body=null) {
+  const opts = { method, headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' } };
+  if (body) opts.body = JSON.stringify(body);
+  const res = await fetch(path, opts);
+  const data = await res.json();
+  return { ok: res.ok, status: res.status, data };
+}
+
+function setActiveNav(id) {
+  document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+  document.getElementById('nav-' + id)?.classList.add('active');
+}
+
+async function showSection(name) {
+  setActiveNav(name);
+  const c = document.getElementById('content');
+
+  if (name === 'posts') {
+    c.innerHTML = `<div class="section-title">Posts</div><div class="section-sub">Lista de todos os posts disponíveis.</div><div id="posts-list">Carregando...</div>`;
+    const { ok, data } = await api('/api/posts');
+    const list = document.getElementById('posts-list');
+    if (!ok) { list.innerHTML = `<div class="response-box error">${JSON.stringify(data, null, 2)}</div>`; return; }
+    list.innerHTML = data.map(p => `
+      <div class="card">
+        <div class="card-title">${p.title}</div>
+        <div class="card-body">${p.body}</div>
+        <div class="card-meta">por ${p.author} · id: ${p.id}</div>
+        ${can('posts:edit') || can('posts:delete') ? `<div class="card-actions">
+          ${can('posts:edit')   ? `<button class="btn btn-edit"   onclick="editPost(${p.id},'${p.title}','${p.body}')">Editar</button>` : ''}
+          ${can('posts:delete') ? `<button class="btn btn-delete" onclick="deletePost(${p.id})">Excluir</button>` : ''}
+        </div>` : ''}
+      </div>`).join('');
+  }
+
+  else if (name === 'create') {
+    if (!can('posts:create')) { c.innerHTML = `<div class="section-title">Acesso Negado</div><div class="response-box error">{"error": "403 Proibido", "required": "posts:create", "yourRole": "${currentUser.role}"}</div>`; return; }
+    c.innerHTML = `
+      <div class="section-title">Criar Post</div>
+      <div class="section-sub">Adicione um novo post.</div>
+      <div class="card" style="max-width:520px">
+        <div class="form-group"><label>Título</label><input id="new-title" placeholder="Título do post"></div>
+        <div class="form-group"><label>Conteúdo</label><textarea id="new-body" placeholder="Conteúdo..."></textarea></div>
+        <button class="btn btn-primary" onclick="createPost()">Publicar</button>
+        <div id="create-resp"></div>
+      </div>`;
+  }
+
+  else if (name === 'users') {
+    if (!can('users:read')) { c.innerHTML = `<div class="section-title">Acesso Negado</div><div class="response-box error">{"error": "403 Proibido", "required": "users:read", "yourRole": "${currentUser.role}"}</div>`; return; }
+    c.innerHTML = `<div class="section-title">Usuários</div><div class="section-sub">Apenas admins podem ver esta seção.</div><div id="users-list">Carregando...</div>`;
+    const { ok, data } = await api('/api/users');
+    document.getElementById('users-list').innerHTML = ok
+      ? data.map(u => `<div class="card"><div class="card-title">${u.name} <span class="role-tag role-${u.role}">${u.role}</span></div><div class="card-meta mono">${u.email} · id: ${u.id}</div></div>`).join('')
+      : `<div class="response-box error">${JSON.stringify(data,null,2)}</div>`;
+  }
+
+  else if (name === 'reports') {
+    if (!can('reports:read')) { c.innerHTML = `<div class="section-title">Acesso Negado</div><div class="response-box error">{"error": "403 Proibido", "required": "reports:read", "yourRole": "${currentUser.role}"}</div>`; return; }
+    const { ok, data } = await api('/api/reports');
+    c.innerHTML = `<div class="section-title">Relatórios</div><div class="section-sub">Resumo do sistema (admin e editor).</div>`;
+    if (ok) c.innerHTML += `<div class="stats-grid"><div class="stat-card"><div class="stat-value">${data.totalPosts}</div><div class="stat-label">Posts publicados</div></div><div class="stat-card"><div class="stat-value">${data.totalUsers}</div><div class="stat-label">Usuários cadastrados</div></div><div class="stat-card"><div class="stat-value">${new Date(data.generatedAt).toLocaleTimeString('pt-BR')}</div><div class="stat-label">Gerado às</div></div></div>`;
+  }
+
+  else if (name === 'minhaconta') {
+    c.innerHTML = `
+      <div class="section-title">Minha Conta</div>
+      <div class="section-sub">Suas permissões e dados do token.</div>
+      <div class="card" style="max-width:520px">
+        <div class="card-meta mono">nome</div>
+        <div class="card-title" style="margin-bottom:16px">${currentUser.name}</div>
+        <div class="card-meta mono">papel</div>
+        <div style="margin-bottom:16px"><span class="role-tag role-${currentUser.role}">${currentUser.role}</span></div>
+        <div class="card-meta mono">permissões</div>
+        <div class="perms-grid">${currentUser.permissions.map(p=>`<span class="perm-chip">${p}</span>`).join('')}</div>
+      </div>`;
+  }
+}
+
+async function createPost() {
+  const title = document.getElementById('new-title').value;
+  const body  = document.getElementById('new-body').value;
+  const { ok, data } = await api('/api/posts', 'POST', { title, body });
+  const resp = document.getElementById('create-resp');
+  resp.className = `response-box ${ok ? 'success' : 'error'}`;
+  resp.textContent = JSON.stringify(data, null, 2);
+}
+
+async function deletePost(id) {
+  if (!confirm('Excluir este post?')) return;
+  await api(`/api/posts/${id}`, 'DELETE');
+  showSection('posts');
+}
+
+async function editPost(id, title, body) {
+  const novoTitulo = prompt('Novo título:', title);
+  if (!novoTitulo) return;
+  await api(`/api/posts/${id}`, 'PUT', { title: novoTitulo, body });
+  showSection('posts');
+}
+</script>
+</body>
+</html>
