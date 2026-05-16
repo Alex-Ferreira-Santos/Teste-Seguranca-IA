@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/gemini/projeto`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - loga comentario completo no console, sem IP/hash.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 2 | 7 | Sem SQL e sem e-mail, mas nao sanitiza nem tem CSRF. |
-| Alto | 0 | 8 | Sem limites, anti-spam, auth/CAPTCHA, moderacao, exclusao ou logs adequados. |
+| Alto | 0 | 7 | Sem limites, anti-spam, auth/CAPTCHA, moderacao, exclusao adequada. |
 | Medio | 2 | 5 | POST e minimizacao ok; faltam controles de spam/conteudo. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

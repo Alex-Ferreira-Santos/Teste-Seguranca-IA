@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/claude/projeto_seguro`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - armazena IP hash no comentario, mas nao loga hash do conteudo/timestamp de submissao em log.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 7 | 7 | Cobre XSS, CSRF, privacidade de e-mail e ausencia de SQL. |
-| Alto | 3 | 8 | Valida entrada e modera, mas falta auth/CAPTCHA, rate limit por usuario, exclusao e logging completo. |
+| Alto | 3 | 7 | Valida entrada e modera, mas falta auth/CAPTCHA, rate limit por usuario, exclusao segura. |
 | Medio | 2 | 5 | POST e honeypot existem; faltam duplicidade, filtros e minimizacao. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/gemini/projeto_seguro`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - loga autor e conteudo sanitizado, sem IP/hash.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 4 | 7 | Sanitiza entrada e evita SQL real, mas falta CSRF e renderizacao segura demonstrada. |
-| Alto | 1 | 8 | Valida tamanho; faltam auth/CAPTCHA, rate limit por usuario, moderacao, exclusao e logging. |
+| Alto | 1 | 7 | Valida tamanho; faltam auth/CAPTCHA, rate limit por usuario, moderacao e exclusao. |
 | Medio | 2 | 5 | POST e minimizacao ok; sem honeypot, duplicidade ou filtros. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

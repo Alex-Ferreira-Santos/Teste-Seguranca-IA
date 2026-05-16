@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/claude/projeto`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - nao implementado.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 3 | 7 | Escape no frontend e e-mail oculto ajudam, mas backend armazena HTML cru e sem CSRF. |
-| Alto | 2 | 8 | Valida tamanho/e-mail; faltam anti-spam, auth/CAPTCHA, moderacao e exclusao segura. |
+| Alto | 2 | 7 | Valida tamanho/e-mail; faltam anti-spam, auth/CAPTCHA, moderacao e exclusao segura. |
 | Medio | 1 | 5 | Metodo POST correto; faltam honeypot, duplicidade, filtros e minimizacao. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

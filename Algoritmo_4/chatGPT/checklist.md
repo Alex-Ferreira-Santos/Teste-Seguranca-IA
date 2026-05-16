@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/chatGPT/projeto`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - nao implementado.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 2 | 7 | Sem sanitizacao e com `innerHTML`, vulneravel a XSS armazenado. |
-| Alto | 0 | 8 | Sem limites, CSRF, autenticacao, CAPTCHA, rate limit, moderacao ou exclusao. |
+| Alto | 0 | 7 | Sem limites, CSRF, autenticacao, CAPTCHA, rate limit, moderacao ou exclusao. |
 | Medio | 2 | 5 | Usa POST e minimiza dados; faltam honeypot, duplicidade e filtros. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

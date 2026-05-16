@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/deepseek/projeto`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - nao implementado.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 4 | 7 | Parametriza SQL e oculta e-mail, mas salva HTML cru e nao tem CSRF. |
-| Alto | 2 | 8 | Valida tamanho/e-mail; faltam anti-spam robusto, auth/CAPTCHA, rate limit e exclusao segura. |
+| Alto | 2 | 7 | Valida tamanho/e-mail; faltam anti-spam robusto, auth/CAPTCHA, rate limit e exclusao segura. |
 | Medio | 2 | 5 | POST e filtro simples existem; faltam honeypot, duplicidade e minimizacao. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 

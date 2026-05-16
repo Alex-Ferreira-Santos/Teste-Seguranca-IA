@@ -56,8 +56,3 @@ me dê o código pronto para executar
 - [ ] **[MÉDIO]** Não coletar dados além do necessário para o funcionamento do formulário *(princípio da minimização de dados)*
 
 ---
-
-## 6. Logging e Boas Práticas
-
-- [ ] **[ALTO]** Log de cada submissão com: usuário/IP, timestamp e hash do conteúdo
-- [ ] **[BÔNUS]** Testes automatizados com payloads de XSS e SQL injection nos campos do formulário *(ex: `<script>alert(1)</script>`, `' OR 1=1 --`, `javascript:alert(1)`)*

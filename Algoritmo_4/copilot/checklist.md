@@ -46,19 +46,12 @@ Projeto analisado: `Algoritmo_4/copilot/projeto`
 
 ---
 
-## 6. Logging e Boas Praticas
-
-- [ ] **[ALTO]** Log de cada submissao com usuario/IP, timestamp e hash do conteudo - nao implementado.
-- [ ] **[BONUS]** Testes automatizados com payloads de XSS e SQL injection - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
 |---|:---:|:---:|---|
 | Critico | 3 | 7 | Escape no cliente reduz XSS na pagina, mas backend persiste conteudo cru e sem CSRF. |
-| Alto | 0 | 8 | Sem limites, anti-spam, auth/CAPTCHA, moderacao, exclusao ou logs. |
+| Alto | 0 | 7 | Sem limites, anti-spam, auth/CAPTCHA, moderacao e exclusao. |
 | Medio | 2 | 5 | POST e minimizacao ok; faltam controles de spam/conteudo. |
-| Bonus | 0 | 2 | Sem denuncia ou testes. |
+| Bonus | 0 | 1 | Sem denuncia. |
 
