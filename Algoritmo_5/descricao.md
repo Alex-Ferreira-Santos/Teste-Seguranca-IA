@@ -46,5 +46,3 @@ me dê o código pronto para executar
 
 - [ ] **[IMPORTANTE]** Cadastros são registrados em log de auditoria (quem criou, quando, IP) sem dados sensíveis
 - [ ] **[IMPORTANTE]** O código não expõe stack traces ou mensagens de erro internas ao usuário final
-- [ ] **[RECOMENDADO]** Dependências e bibliotecas utilizadas estão atualizadas e sem vulnerabilidades conhecidas (CVE)
-- [ ] **[RECOMENDADO]** A funcionalidade foi revisada por uma segunda pessoa ou passou por análise de segurança (code review)

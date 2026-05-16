@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/deepseek/projeto_seguro`
 
 - [x] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - loga criação com userId/e-mail/IP redacted e controller loga IP/userAgent.
 - [ ] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - em desenvolvimento inclui `err.message` no handler global.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/deepseek/projeto_seguro`
 |---|:---:|:---:|---|
 | Critico | 3 | 12 | Forte em hash/validacao, mas nao implementa fluxo de convite/admin exigido. |
 | Importante | 4 | 8 | Tem rate limit e auditoria, mas vaza duplicidade e falta confirmacao de e-mail real. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

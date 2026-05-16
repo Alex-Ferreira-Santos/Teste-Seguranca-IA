@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/chatGPT/projeto`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - nao implementado.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - retorna mensagens genericas de erro interno.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria de dependencias.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/chatGPT/projeto`
 |---|:---:|:---:|---|
 | Critico | 6 | 12 | Boa escolha de link e hash, mas token nao e uso unico e cadastro e publico. |
 | Importante | 2 | 8 | Nao loga link e esconde stack trace; faltam anti-enumeracao, rate limit e auditoria. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

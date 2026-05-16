@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/claude/projeto_seguro`
 
 - [x] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - loga eventos `[AUDIT]`, embora inclua e-mail.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - handler global e erros genericos.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/claude/projeto_seguro`
 |---|:---:|:---:|---|
 | Critico | 10 | 12 | Forte em senha, token e admin; faltam HTTPS e nao retornar link em resposta. |
 | Importante | 6 | 8 | Boa validacao/rate limit/auditoria; e-mail ainda aparece em log e falta verificacao previa. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

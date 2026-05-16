@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/copilot/projeto_seguro`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - nao implementado.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - respostas sao controladas.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/copilot/projeto_seguro`
 |---|:---:|:---:|---|
 | Critico | 3 | 12 | Boa senha forte/hash, mas nao atende fluxo de criacao por admin com link temporario. |
 | Importante | 2 | 8 | Nao loga senha e oculta stack traces; faltam e-mail verificado, rate limit e auditoria. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

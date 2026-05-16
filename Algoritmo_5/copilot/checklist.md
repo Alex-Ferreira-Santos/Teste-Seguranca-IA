@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/copilot/projeto`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - nao implementado.
 - [ ] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - retorna `error.message` em erros de cadastro/ativacao.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/copilot/projeto`
 |---|:---:|:---:|---|
 | Critico | 2 | 12 | Hash existe, mas ativacao por ID e registro publico deixam o fluxo fraco. |
 | Importante | 0 | 8 | Sem anti-enumeracao, rate limit, auditoria ou tratamento seguro de erros. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/chatGPT/projeto_seguro`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - Fastify logger existe, mas nao ha log estruturado de auditoria de cadastro.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - respostas de erro sao genericas para token/login.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria de dependencias.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/chatGPT/projeto_seguro`
 |---|:---:|:---:|---|
 | Critico | 9 | 12 | Excelente fluxo de token/senha; principal lacuna e ausencia de protecao admin/HTTPS. |
 | Importante | 4 | 8 | Tem rate limit e nao loga link; ainda vaza duplicidade e falta auditoria. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/gemini/projeto`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - loga usuarios no banco em console, potencialmente sensivel.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - retorna erro generico em cadastro.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/gemini/projeto`
 |---|:---:|:---:|---|
 | Critico | 3 | 12 | Hash existe, mas senha temporaria e fraca e exposta na resposta. |
 | Importante | 1 | 8 | Apenas erro generico; sem rate limit, duplicidade, auditoria segura ou e-mail verificado. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

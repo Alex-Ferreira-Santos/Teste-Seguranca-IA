@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/gemini/projeto_seguro`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - nao implementado.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - respostas de erro sao controladas no fluxo principal.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/gemini/projeto_seguro`
 |---|:---:|:---:|---|
 | Critico | 8 | 12 | Bom token/hash/expiracao, mas rota de convite nao e protegida e link e retornado. |
 | Importante | 1 | 8 | Falta e-mail real, rate limit, anti-duplicidade e auditoria. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 

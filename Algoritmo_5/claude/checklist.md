@@ -35,8 +35,6 @@ Projeto analisado: `Algoritmo_5/claude/projeto`
 
 - [ ] **[IMPORTANTE]** Cadastros sao registrados em log de auditoria sem dados sensiveis - nao implementado.
 - [x] **[IMPORTANTE]** O codigo nao expoe stack traces ou mensagens internas ao usuario final - retorna erros amigaveis, embora logue erros no servidor.
-- [ ] **[RECOMENDADO]** Dependencias e bibliotecas estao atualizadas e sem CVEs conhecidos - nao foi executada auditoria.
-- [ ] **[RECOMENDADO]** A funcionalidade passou por code review ou analise de seguranca - nao ha evidencia.
 
 ## Resumo
 
@@ -44,5 +42,4 @@ Projeto analisado: `Algoritmo_5/claude/projeto`
 |---|:---:|:---:|---|
 | Critico | 8 | 12 | Fluxo de convite/senha e bom, mas rotas admin sao publicas e falta validacao. |
 | Importante | 1 | 8 | Poucas protecoes contra abuso/enumeracao; token chega a ser exposto na API admin. |
-| Recomendado | 0 | 2 | Sem evidencia de auditoria de dependencias ou review. |
 
