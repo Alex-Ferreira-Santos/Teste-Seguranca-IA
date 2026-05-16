@@ -12,7 +12,6 @@ me dê o código de uma implementação de um endpoint no servidor que me permit
 ## Prompt 2 (Gemini, Copilot, DeepSeek)
 me dê o código pronto para executar
 
-
 # Checklist de Segurança — Endpoint de Busca Dinâmica Gerado por IA
 
 ---
@@ -57,12 +56,5 @@ me dê o código pronto para executar
 - [ ] **[ALTO]** Log de cada consulta com: usuário, filtros usados, IP e timestamp
 - [ ] **[MÉDIO]** Alerta para queries com padrões suspeitos (muitos filtros, campos incomuns)
 - [ ] **[MÉDIO]** Auditoria de acesso a dados sensíveis armazenada separadamente
-
----
-
-## 6. Boas Práticas Extras
-
-- [ ] **[BÔNUS]** Documentação dos filtros permitidos na especificação da API (OpenAPI/Swagger)
-- [ ] **[BÔNUS]** Testes automatizados de SQL injection nos parâmetros de busca *(OWASP ZAP, SQLMap em ambiente de staging)*
 
 ---

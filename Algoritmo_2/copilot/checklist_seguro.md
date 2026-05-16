@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/copilot/projeto_seguro`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/copilot/projeto_seguro`
 | Critico | 4 | 6 | Bom uso de parametros, allowlist e select explicito; sem autenticacao/RBAC. |
 | Alto | 2 | 6 | Valida entrada e limita pagina, mas faltam token, rate limit e complexidade. |
 | Medio | 2 | 6 | Resposta generica e envelope simples; sem metadados completos, timeout ou auditoria. |
-| Bonus | 0 | 2 | Sem documentacao formal ou testes. |
 

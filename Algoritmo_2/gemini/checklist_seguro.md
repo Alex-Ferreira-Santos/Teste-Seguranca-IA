@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/gemini/projeto_seguro`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/gemini/projeto_seguro`
 | Critico | 4 | 6 | Prisma, filtros fixos e `select` explicito; sem autenticacao/RBAC. |
 | Alto | 3 | 6 | Valida entrada, pagina e limita complexidade; faltam token, rate limit e logging. |
 | Medio | 2 | 6 | Envelope e paginacao ok; faltam timeout, erro vago, alerta e auditoria. |
-| Bonus | 0 | 2 | Sem documentacao formal ou testes de injecao. |
 

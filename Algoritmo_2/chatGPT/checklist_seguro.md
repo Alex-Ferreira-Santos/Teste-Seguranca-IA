@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/chatGPT/projeto_seguro`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/chatGPT/projeto_seguro`
 | Critico | 4 | 6 | Forte contra SQL injection e exposicao basica, mas sem autenticacao/RBAC. |
 | Alto | 3 | 6 | Valida entrada, pagina e limita filtros; falta rate limit por usuario, token e logging. |
 | Medio | 3 | 6 | Boa resposta generica e envelope; faltam timeout, alertas e auditoria. |
-| Bonus | 0 | 2 | Sem OpenAPI/Swagger ou testes automatizados de injecao. |
 

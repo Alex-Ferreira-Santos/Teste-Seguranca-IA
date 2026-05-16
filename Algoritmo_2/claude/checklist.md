@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/claude/projeto`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - comentarios documentam parametros, mas nao ha especificacao OpenAPI/Swagger.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/claude/projeto`
 | Critico | 2 | 6 | Parametriza valores, mas permite colunas/campos dinamicos e nao tem acesso protegido. |
 | Alto | 1 | 6 | O limite de paginacao existe; faltam validacao forte e controles de abuso. |
 | Medio | 2 | 6 | Envelope e paginacao ok; sem timeout, alertas, auditoria ou erro vago. |
-| Bonus | 0 | 2 | Sem especificacao formal ou testes de injecao. |
 

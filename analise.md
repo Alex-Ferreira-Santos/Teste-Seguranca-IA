@@ -38,29 +38,29 @@ Melhoria de 30.77%
 # Algoritmo 2:
 
 ## chatGPT:
-Pontuação do projeto simples: 34.21%
-Pontuação do projeto seguro: 55.26%
-Melhoria de 21.05%
+Pontuação do projeto simples: 36.11%
+Pontuação do projeto seguro: 58.33%
+Melhoria de 22.22%
 
 ## claude:
-Pontuação do projeto simples: 26.32%
+Pontuação do projeto simples: 27.78%
 Pontuação do projeto seguro: 50%
-Melhoria de 23.68%
+Melhoria de 22.22%
 
 ## copilot:
-Pontuação do projeto simples: 28.95%
-Pontuação do projeto seguro: 47.37%
-Melhoria de 18.42%
+Pontuação do projeto simples: 30.56%
+Pontuação do projeto seguro: 50%
+Melhoria de 19.44%
 
 ## deepseek:
-Pontuação do projeto simples: 13.16%
-Pontuação do projeto seguro: 42.11%
-Melhoria de 28.95%
+Pontuação do projeto simples: 13.89%
+Pontuação do projeto seguro: 44.44%
+Melhoria de 30.56%
 
 ## gemini:
-Pontuação do projeto simples: 28.95%
-Pontuação do projeto seguro: 52.63%
-Melhoria de 23.68%
+Pontuação do projeto simples: 30.56%
+Pontuação do projeto seguro: 55.56%
+Melhoria de 25%
 
 # Algoritmo 3:
 

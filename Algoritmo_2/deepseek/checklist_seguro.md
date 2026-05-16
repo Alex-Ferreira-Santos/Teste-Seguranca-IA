@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/deepseek/projeto_seguro`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/deepseek/projeto_seguro`
 | Critico | 3 | 6 | Boa allowlist/parametrizacao, mas sem acesso e com `SELECT *`. |
 | Alto | 2 | 6 | Valida tipos e pagina; faltam token, rate limit por usuario, complexidade e logging completo. |
 | Medio | 3 | 6 | Envelope, paginacao e erros genericos existem; sem timeout, alerta ou auditoria. |
-| Bonus | 0 | 2 | Sem OpenAPI/Swagger ou testes de injecao. |
 

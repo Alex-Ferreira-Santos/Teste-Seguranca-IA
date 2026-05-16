@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/claude/projeto_seguro`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - comentarios existem, mas sem OpenAPI/Swagger.
-- [x] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - `search.test.ts` testa placeholder, coluna invalida, operador invalido e escape de LIKE.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/claude/projeto_seguro`
 | Critico | 4 | 6 | Boa protecao contra injecao; faltam RBAC e projecao segura. |
 | Alto | 2 | 6 | Pagina e limita filtros, mas token e rate limit ainda sao fracos. |
 | Medio | 2 | 6 | Envelope ok; faltam timeout, erro vago, auditoria e alertas. |
-| Bonus | 1 | 2 | Tem testes especificos de SQL injection, mas sem documentacao formal. |
 

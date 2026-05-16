@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/gemini/projeto`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/gemini/projeto`
 | Critico | 3 | 6 | ORM e filtros fixos reduzem injecao, mas sem acesso e sem projecao explicita. |
 | Alto | 1 | 6 | Complexidade e limitada pelo endpoint simples; faltam validacao, paginacao e rate limit. |
 | Medio | 0 | 6 | Sem envelope, timeout, logging, alerta ou auditoria. |
-| Bonus | 0 | 2 | Sem documentacao formal ou testes. |
 

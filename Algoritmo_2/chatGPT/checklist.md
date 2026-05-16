@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/chatGPT/projeto`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/chatGPT/projeto`
 | Critico | 3 | 6 | Usa Prisma e allowlists, mas nao tem controle de acesso nem projecao segura. |
 | Alto | 1 | 6 | Apenas a complexidade e limitada pelo formato fixo dos filtros. |
 | Medio | 2 | 6 | Envelope e paginacao estao presentes; faltam timeout, logging, alerta e protecao de erro. |
-| Bonus | 0 | 2 | Sem documentacao formal ou testes de injecao. |
 

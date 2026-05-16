@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/deepseek/projeto`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - ha rota raiz com exemplos, mas nao especificacao OpenAPI/Swagger.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/deepseek/projeto`
 | Critico | 1 | 6 | Operadores sao fixos, mas ha interpolacao de identificadores e sem acesso protegido. |
 | Alto | 0 | 6 | Sem validacao forte, teto de limite, rate limit, complexidade ou logging. |
 | Medio | 2 | 6 | Envelope e paginacao existem; faltam timeout, erro vago, alertas e auditoria. |
-| Bonus | 0 | 2 | Exemplos nao substituem especificacao formal; sem testes. |
 

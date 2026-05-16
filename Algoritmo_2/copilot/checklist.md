@@ -45,13 +45,6 @@ Projeto analisado: `Algoritmo_2/copilot/projeto`
 
 ---
 
-## 6. Boas Praticas Extras
-
-- [ ] **[BONUS]** Documentacao dos filtros permitidos na especificacao da API (OpenAPI/Swagger) - nao implementado.
-- [ ] **[BONUS]** Testes automatizados de SQL injection nos parametros de busca - nao identificados.
-
----
-
 ## Resumo
 
 | Nivel | Atendidos | Total | Observacao |
@@ -59,5 +52,4 @@ Projeto analisado: `Algoritmo_2/copilot/projeto`
 | Critico | 3 | 6 | Query builder e filtros fixos ajudam, mas faltam acesso e projecao segura. |
 | Alto | 1 | 6 | Complexidade e baixa por desenho; sem paginacao, validacao forte ou rate limit. |
 | Medio | 0 | 6 | Sem envelope, timeout, logs, alertas ou auditoria. |
-| Bonus | 0 | 2 | Sem documentacao formal ou testes. |
 
